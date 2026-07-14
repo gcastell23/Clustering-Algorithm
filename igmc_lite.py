@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib
-# Force Matplotlib to use a headless background generator for flawless cloud runs
+# Crucial: Force Matplotlib to use a 'headless' background generator 
+# so it runs flawlessly in the cloud without needing a monitor!
 matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
@@ -17,10 +18,10 @@ def smart_distance(cell1, cell2):
     # Biological counts follow a Negative Binomial noise property
     mean_expr = (cell1 + cell2) / 2.0 + 1e-5
     variance = mean_expr + 0.1 * (mean_expr ** 2) 
-    # Scale differences by expected noise to pull out rare biological signals
+    # Scale differences by expected noise to pull out rare biological signals[cite: 1]
     return np.sum(((cell1 - cell2) ** 2) / variance)
 
-# Generate our customized similarity network
+# Generate our customized similarity network[cite: 1]
 n_cells = len(X_counts)
 W = np.zeros((n_cells, n_cells))
 for i in range(n_cells):
@@ -34,7 +35,7 @@ print("💧 Step 3: Simulating the Ink-Drop Test (Markov Random Walks)...")
 row_sums = W.sum(axis=1)
 P = W / row_sums[:, np.newaxis]
 
-# Track where random walks naturally pool at timescale t=2
+# Track where random walks naturally pool at timescale t=2[cite: 1]
 P_t = np.linalg.matrix_power(P, 2)
 predicted_clusters = np.argmax(P_t, axis=1)
 unique_clusters, indexed_clusters = np.unique(predicted_clusters, return_inverse=True)
@@ -46,17 +47,17 @@ cal_idx = np.arange(1, n_cells, 2)
 knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_counts[train_idx], y_true[train_idx])
 
-# Quantify uncertainty thresholds
+# Quantify uncertainty thresholds[cite: 1]
 probs_cal = knn.predict_proba(X_counts[cal_idx])
 true_labels_cal = y_true[cal_idx]
 scores_cal = 1.0 - probs_cal[np.arange(len(cal_idx)), true_labels_cal]
 
-alpha = 0.1 # Guarantee 90% accuracy coverage
+alpha = 0.1 # Guarantee 90% accuracy coverage[cite: 1]
 q_level = np.ceil((len(cal_idx) + 1) * (1 - alpha)) / len(cal_idx)
 q_level = min(max(q_level, 0.0), 1.0)
 qhat = np.quantile(scores_cal, q_level)
 
-# Pinpoint cells with transitioning phenotypes (Ambiguous cells)
+# Pinpoint cells with transitioning phenotypes (Ambiguous cells)[cite: 1]
 all_probs = knn.predict_proba(X_counts)
 prediction_sets = []
 ambiguous_count = 0
@@ -70,7 +71,7 @@ for i, prob in enumerate(all_probs):
 
 print(f"📊 Dashboard Complete: Successfully flagged {ambiguous_count} transitioning cells.")
 
-# Build & Save the High-Quality Visual Dashboard
+# Build & Save the High-Quality Visual Dashboard[cite: 1]
 fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 
 # Plot A: True Biological Labels
@@ -84,7 +85,7 @@ scatter1 = axes[1].scatter(X_counts[:, 0], X_counts[:, 1], c=indexed_clusters, c
 axes[1].set_title("IGMC-Lite Real-time Discovery\nHighlighted Transitioning/Ambiguous Cells", fontsize=12, fontweight='bold')
 axes[1].set_xlabel("Gene Expression Marker A")
 
-# Circle the transition-state cells identified by Conformal Prediction
+# Circle the transition-state cells identified by Conformal Prediction[cite: 1]
 flagged = False
 for i, p_set in enumerate(prediction_sets):
     if len(p_set) > 1:
