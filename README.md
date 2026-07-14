@@ -18,3 +18,23 @@ You can run this algorithm directly on your machine or in **GitHub Codespaces** 
 ### 1. Install dependencies
 ```bash
 pip install -r requirements.txt
+
+Bash
+python igmc_lite.py
+
+## 🏃‍♂️ Fast Steps to Run and Publish This Live on GitHub
+
+1. **Upload the Files:** Create a new repository on GitHub (e.g., `igmc-project`) and drag and drop these 4 files (`requirements.txt`, `igmc_lite.py`, `index.html`, `README.md`) directly into the repository.
+2. **Open in the Cloud (To Run/Test):**
+   * On your GitHub repository homepage, click the green **Code** button.
+   * Switch to the **Codespaces** tab and click **Create codespace on main**.
+   * When the cloud environment loads, paste these commands into the terminal window at the bottom to generate your visual results:
+     ```bash
+     pip install -r requirements.txt
+     python igmc_lite.py
+     ```
+3. **Publish the Website (To Show Your Judges):**
+   * Go back to your GitHub repository on GitHub.com.
+   * Click **Settings** (the gear icon at the top right) ➡️ **Pages** (on the left menu).
+   * Under "Branch", select **`main`** and click **Save**.
+   * Refresh the page after 1 minute; you will see a link showing your live, interactive presentation dashboard!
