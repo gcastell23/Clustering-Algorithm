@@ -1,0 +1,386 @@
+{
+  "log": {
+    "name": "segerstolpe",
+    "n_cells": 2394,
+    "n_genes": 2000,
+    "n_types": 13,
+    "n_batches": 1
+  },
+  "metrics": {
+    "PCA+Leiden": {
+      "ARI": 0.5364642391293757,
+      "NMI": 0.7896304052896909,
+      "AMI": 0.7865885956872479,
+      "homogeneity": 0.9228857442985033,
+      "completeness": 0.6900012278894153,
+      "n_clusters": 13,
+      "rare_recall": 0.0,
+      "silhouette_Z": 0.20849494636058807,
+      "per_type_f1": {
+        "acinar": 0.9791666666666666,
+        "activated_stellate": 0.8208955223880596,
+        "alpha": 0.5029673590504452,
+        "beta": 0.971153846153846,
+        "delta": 0.9802371541501976,
+        "ductal": 0.9943630214205187,
+        "endothelial": 0.975609756097561,
+        "epsilon": 0.0,
+        "gamma": 0.9523809523809524,
+        "macrophage": 0.0,
+        "mast": 0.0,
+        "quiescent_stellate": 0.0,
+        "schwann": 0.0
+      }
+    },
+    "NBVAE+Euclid": {
+      "ARI": 0.5256848296783758,
+      "NMI": 0.7955460267362449,
+      "AMI": 0.7924117637847229,
+      "homogeneity": 0.9464575189351268,
+      "completeness": 0.6861415904987092,
+      "n_clusters": 14,
+      "rare_recall": 0.09696969696969697,
+      "silhouette_Z": 0.21963082253932953,
+      "per_type_f1": {
+        "acinar": 0.9790575916230367,
+        "activated_stellate": 0.9243697478991597,
+        "alpha": 0.5095729013254786,
+        "beta": 0.7992351816443594,
+        "delta": 0.984251968503937,
+        "ductal": 0.9932432432432432,
+        "endothelial": 0.9767441860465117,
+        "epsilon": 0.48484848484848486,
+        "gamma": 0.9858490566037736,
+        "macrophage": 0.0,
+        "mast": 0.0,
+        "quiescent_stellate": 0.0,
+        "schwann": 0.0
+      }
+    },
+    "KMeans": {
+      "ARI": 0.4075021225551707,
+      "NMI": 0.7358223436133449,
+      "AMI": 0.7319855996588013,
+      "homogeneity": 0.9098706986120909,
+      "completeness": 0.6176689925392105,
+      "n_clusters": 13,
+      "rare_recall": 0.007231889423670246,
+      "silhouette_Z": 0.19766367971897125,
+      "per_type_f1": {
+        "acinar": 0.9791666666666666,
+        "activated_stellate": 0.7236842105263158,
+        "alpha": 0.46423135464231347,
+        "beta": 0.7053941908713693,
+        "delta": 0.968503937007874,
+        "ductal": 0.7249283667621775,
+        "endothelial": 0.0,
+        "epsilon": 0.027027027027027025,
+        "gamma": 0.9653579676674364,
+        "macrophage": 0.0091324200913242,
+        "mast": 0.0,
+        "quiescent_stellate": 0.0,
+        "schwann": 0.0
+      }
+    },
+    "IGMC-EucPull": {
+      "ARI": 0.579711877596229,
+      "NMI": 0.808989421417387,
+      "AMI": 0.806375168334389,
+      "homogeneity": 0.9307525795493977,
+      "completeness": 0.7153992703910788,
+      "n_clusters": 12,
+      "rare_recall": 0.0022222222222222222,
+      "silhouette_Z": 0.19343435764312744,
+      "per_type_f1": {
+        "acinar": 0.9740932642487047,
+        "activated_stellate": 0.9401709401709402,
+        "alpha": 0.5903698534542917,
+        "beta": 0.8053435114503816,
+        "delta": 0.9652509652509653,
+        "ductal": 0.9932126696832579,
+        "endothelial": 0.7499999999999999,
+        "epsilon": 0.0,
+        "gamma": 0.9658314350797267,
+        "macrophage": 0.0,
+        "mast": 0.0,
+        "quiescent_stellate": 0.0,
+        "schwann": 0.011111111111111112
+      }
+    },
+    "IGMC-FR+Leiden": {
+      "ARI": 0.5037906500318575,
+      "NMI": 0.7691067275657906,
+      "AMI": 0.7657724485659411,
+      "homogeneity": 0.8826627653031375,
+      "completeness": 0.6814385242424298,
+      "n_clusters": 13,
+      "rare_recall": 0.1294949494949495,
+      "silhouette_Z": 0.144959956407547,
+      "per_type_f1": {
+        "acinar": 0.9763779527559054,
+        "activated_stellate": 0.9401709401709402,
+        "alpha": 0.6070199587061252,
+        "beta": 0.7588152327221439,
+        "delta": 0.0,
+        "ductal": 0.6646616541353384,
+        "endothelial": 1.0,
+        "epsilon": 0.0,
+        "gamma": 0.9631336405529953,
+        "macrophage": 0.6363636363636364,
+        "mast": 0.0,
+        "quiescent_stellate": 0.0,
+        "schwann": 0.011111111111111112
+      }
+    },
+    "IGMC-Markov": {
+      "ARI": 0.5200663487055582,
+      "NMI": 0.7844353474541906,
+      "AMI": 0.78147663643472,
+      "homogeneity": 0.9283229347536959,
+      "completeness": 0.6791663660217999,
+      "n_clusters": 12,
+      "rare_recall": 0.0027210884353741495,
+      "silhouette_Z": 0.1824411153793335,
+      "per_type_f1": {
+        "acinar": 0.9790575916230367,
+        "activated_stellate": 0.9401709401709402,
+        "alpha": 0.6456798392498325,
+        "beta": 0.748,
+        "delta": 0.9729729729729729,
+        "ductal": 0.6636636636636636,
+        "endothelial": 0.56,
+        "epsilon": 0.0,
+        "gamma": 0.9653579676674364,
+        "macrophage": 0.0,
+        "mast": 0.0,
+        "quiescent_stellate": 0.0,
+        "schwann": 0.013605442176870748
+      }
+    }
+  },
+  "conformal": {
+    "0.05": {
+      "mean_set_size": 1.976608187134503,
+      "frac_singleton": 0.029657477025898077,
+      "frac_ambiguous": 0.970342522974102,
+      "frac_novel": 0.0,
+      "marginal_coverage": 0.9661654135338346,
+      "per_class_coverage": {
+        "acinar": 0.9787234042553191,
+        "activated_stellate": 1.0,
+        "alpha": 0.9563492063492064,
+        "beta": 0.974025974025974,
+        "delta": 0.968503937007874,
+        "ductal": 0.9707207207207207,
+        "endothelial": 1.0,
+        "epsilon": 0.875,
+        "gamma": 0.9765258215962441,
+        "macrophage": 1.0,
+        "mast": 0.7142857142857143,
+        "quiescent_stellate": 1.0,
+        "schwann": 1.0
+      }
+    },
+    "0.1": {
+      "mean_set_size": 1.926482873851295,
+      "frac_singleton": 0.07894736842105263,
+      "frac_ambiguous": 0.9210526315789473,
+      "frac_novel": 0.0,
+      "marginal_coverage": 0.9177109440267335,
+      "per_class_coverage": {
+        "acinar": 0.9361702127659575,
+        "activated_stellate": 1.0,
+        "alpha": 0.8958333333333334,
+        "beta": 0.935064935064935,
+        "delta": 0.937007874015748,
+        "ductal": 0.9211711711711712,
+        "endothelial": 1.0,
+        "epsilon": 0.875,
+        "gamma": 0.9342723004694836,
+        "macrophage": 1.0,
+        "mast": 0.7142857142857143,
+        "quiescent_stellate": 1.0,
+        "schwann": 1.0
+      }
+    },
+    "0.2": {
+      "mean_set_size": 1.8237259816207185,
+      "frac_singleton": 0.17878028404344193,
+      "frac_ambiguous": 0.8212197159565581,
+      "frac_novel": 0.0,
+      "marginal_coverage": 0.816624895572264,
+      "per_class_coverage": {
+        "acinar": 0.8085106382978723,
+        "activated_stellate": 0.8727272727272727,
+        "alpha": 0.8015873015873016,
+        "beta": 0.8474025974025974,
+        "delta": 0.8346456692913385,
+        "ductal": 0.8040540540540541,
+        "endothelial": 1.0,
+        "epsilon": 0.875,
+        "gamma": 0.8215962441314554,
+        "macrophage": 1.0,
+        "mast": 0.7142857142857143,
+        "quiescent_stellate": 1.0,
+        "schwann": 1.0
+      }
+    }
+  },
+  "topology_global": {
+    "scale": 31.526589945205004,
+    "h0_gap_ratio": 37.99336442736312,
+    "n_significant": 6,
+    "h1_total": 24.060996530601024,
+    "h1_max": 0.20115989638378212,
+    "h1_count": 0,
+    "h0_spread": 0.1327355915683177,
+    "n_points": 1000,
+    "discreteness_index": 0.9465329991645781
+  },
+  "topology_continuity_index": 0.053467000835421885,
+  "topology_per_cluster_truth": {
+    "acinar": {
+      "transitional_frac": 0.015957446808510637,
+      "mean_purity": 0.9824468085106384,
+      "n": 188
+    },
+    "activated_stellate": {
+      "transitional_frac": 0.01818181818181818,
+      "mean_purity": 0.9587878787878786,
+      "n": 55
+    },
+    "alpha": {
+      "transitional_frac": 0.010912698412698412,
+      "mean_purity": 0.9884589947089946,
+      "n": 1008
+    },
+    "beta": {
+      "transitional_frac": 0.07142857142857142,
+      "mean_purity": 0.9347402597402596,
+      "n": 308
+    },
+    "delta": {
+      "transitional_frac": 0.16535433070866143,
+      "mean_purity": 0.8380577427821524,
+      "n": 127
+    },
+    "ductal": {
+      "transitional_frac": 0.01126126126126126,
+      "mean_purity": 0.9879129129129129,
+      "n": 444
+    },
+    "endothelial": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.6285714285714284,
+      "n": 21
+    },
+    "epsilon": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.17083333333333334,
+      "n": 8
+    },
+    "gamma": {
+      "transitional_frac": 0.06572769953051644,
+      "mean_purity": 0.9161189358372457,
+      "n": 213
+    },
+    "macrophage": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.15238095238095237,
+      "n": 7
+    },
+    "mast": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.19999999999999998,
+      "n": 7
+    },
+    "quiescent_stellate": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.06666666666666667,
+      "n": 6
+    },
+    "schwann": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.03333333333333333,
+      "n": 2
+    }
+  },
+  "topology_per_cluster_infer": {
+    "0": {
+      "transitional_frac": 0.02247191011235955,
+      "mean_purity": 0.9698127340823971,
+      "n": 445
+    },
+    "1": {
+      "transitional_frac": 0.06234413965087282,
+      "mean_purity": 0.9363258520365753,
+      "n": 401
+    },
+    "10": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.6285714285714284,
+      "n": 21
+    },
+    "11": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.4377777777777779,
+      "n": 15
+    },
+    "12": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.32000000000000006,
+      "n": 15
+    },
+    "2": {
+      "transitional_frac": 0.39106145251396646,
+      "mean_purity": 0.7206703910614525,
+      "n": 358
+    },
+    "3": {
+      "transitional_frac": 0.08144796380090498,
+      "mean_purity": 0.9051282051282051,
+      "n": 221
+    },
+    "4": {
+      "transitional_frac": 0.09954751131221719,
+      "mean_purity": 0.8877828054298642,
+      "n": 221
+    },
+    "5": {
+      "transitional_frac": 0.04072398190045249,
+      "mean_purity": 0.9447963800904978,
+      "n": 221
+    },
+    "6": {
+      "transitional_frac": 0.0051813471502590676,
+      "mean_purity": 0.9920552677029361,
+      "n": 193
+    },
+    "7": {
+      "transitional_frac": 0.10810810810810811,
+      "mean_purity": 0.9014414414414413,
+      "n": 185
+    },
+    "8": {
+      "transitional_frac": 0.06451612903225806,
+      "mean_purity": 0.939247311827957,
+      "n": 62
+    },
+    "9": {
+      "transitional_frac": 0.25,
+      "mean_purity": 0.8138888888888889,
+      "n": 36
+    }
+  },
+  "markov_robust_times": [
+    15.111596361066765,
+    20.271997861436663,
+    27.194605220720867,
+    48.93900918477494,
+    65.65100508445242,
+    88.0699168290409,
+    118.14457737998951,
+    158.48931924611142
+  ],
+  "runtime_sec": 58.607391119003296
+}

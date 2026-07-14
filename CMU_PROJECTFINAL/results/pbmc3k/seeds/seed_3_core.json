@@ -1,0 +1,43 @@
+{
+  "dataset": "pbmc3k",
+  "seed": 3,
+  "n_cells": 2638,
+  "k_true": 8,
+  "methods": {
+    "PCA+Leiden": {
+      "ARI": 0.8690198667512742,
+      "NMI": 0.8475148546299568,
+      "rare_recall": 0.8668239625875532,
+      "n_clusters": 8
+    },
+    "NBVAE+Euclid": {
+      "ARI": 0.5279091511565371,
+      "NMI": 0.7148508379776453,
+      "rare_recall": 0.6148729374535826,
+      "n_clusters": 9
+    },
+    "IGMC-EucPull": {
+      "ARI": 0.5810881203043012,
+      "NMI": 0.7418238268239364,
+      "rare_recall": 0.5813288878304358,
+      "n_clusters": 8
+    },
+    "IGMC-FR+Leiden": {
+      "ARI": 0.5752291806652,
+      "NMI": 0.7394889905379795,
+      "rare_recall": 0.5781119465329991,
+      "n_clusters": 7
+    }
+  },
+  "conformal": {
+    "marginal_coverage": 0.9037149355572404,
+    "frac_ambiguous": 0.009097801364670205,
+    "frac_singleton": 0.9564063684609553,
+    "mean_set_size": 0.9746019711902957
+  },
+  "logdet_range": [
+    7.435661792755127,
+    22.1602783203125
+  ],
+  "runtime_sec": 538.2487270832062
+}

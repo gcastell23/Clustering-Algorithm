@@ -1,0 +1,43 @@
+{
+  "dataset": "segerstolpe",
+  "seed": 2,
+  "n_cells": 2394,
+  "k_true": 13,
+  "methods": {
+    "PCA+Leiden": {
+      "ARI": 0.5393627232014715,
+      "NMI": 0.7930290978596081,
+      "rare_recall": 0.0,
+      "n_clusters": 13
+    },
+    "NBVAE+Euclid": {
+      "ARI": 0.6989950167178256,
+      "NMI": 0.8488237472585342,
+      "rare_recall": 0.12858420268256335,
+      "n_clusters": 13
+    },
+    "IGMC-EucPull": {
+      "ARI": 0.4295346208913552,
+      "NMI": 0.7388452442025566,
+      "rare_recall": 0.0017021276595744679,
+      "n_clusters": 13
+    },
+    "IGMC-FR+Leiden": {
+      "ARI": 0.5249561479154704,
+      "NMI": 0.7827320255313591,
+      "rare_recall": 0.013207547169811321,
+      "n_clusters": 13
+    }
+  },
+  "conformal": {
+    "marginal_coverage": 0.9085213032581454,
+    "frac_ambiguous": 1.0,
+    "frac_singleton": 0.0,
+    "mean_set_size": 4.8993316624895575
+  },
+  "logdet_range": [
+    11.344818115234375,
+    24.572107315063477
+  ],
+  "runtime_sec": 431.76674818992615
+}

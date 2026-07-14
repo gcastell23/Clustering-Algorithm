@@ -1,0 +1,43 @@
+{
+  "dataset": "pancreas",
+  "seed": 0,
+  "n_cells": 16382,
+  "k_true": 14,
+  "methods": {
+    "PCA+Leiden": {
+      "ARI": 0.4722290997178497,
+      "NMI": 0.71015082957068,
+      "rare_recall": 0.0020602954375621594,
+      "n_clusters": 14
+    },
+    "NBVAE+Euclid": {
+      "ARI": 0.7641962451769863,
+      "NMI": 0.8535625196345553,
+      "rare_recall": 0.475559494219109,
+      "n_clusters": 13
+    },
+    "IGMC-EucPull": {
+      "ARI": 0.6716776694795064,
+      "NMI": 0.7702293050379229,
+      "rare_recall": 0.15827972918375594,
+      "n_clusters": 109
+    },
+    "IGMC-FR+Leiden": {
+      "ARI": 0.6416630323296199,
+      "NMI": 0.8064828997988926,
+      "rare_recall": 0.1412250993359823,
+      "n_clusters": 13
+    }
+  },
+  "conformal": {
+    "marginal_coverage": 0.8980588450738616,
+    "frac_ambiguous": 0.9142351361250153,
+    "frac_singleton": 0.08576486387498473,
+    "mean_set_size": 1.918080820412648
+  },
+  "logdet_range": [
+    0.43929100036621094,
+    24.895580291748047
+  ],
+  "runtime_sec": 1961.0505752563477
+}

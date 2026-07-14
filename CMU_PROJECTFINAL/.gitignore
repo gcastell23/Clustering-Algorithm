@@ -1,0 +1,12 @@
+data/
+results/**/*.npz
+results/**/*.npy
+results/*.log
+*.aux
+*.out
+*.bbl
+*.blg
+__pycache__/
+*.pyc
+paper/*.log
+results/orchestrate.log

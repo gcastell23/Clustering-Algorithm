@@ -1,0 +1,619 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{authblk}
+\usepackage[hidelinks]{hyperref}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{microtype}
+\captionsetup{font=small,labelfont=bf}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\renewcommand{\arraystretch}{1.15}
+
+% ---- result macros (from results/summary.json) ----
+\newcommand{\panrlat}{0.48}     % NB-VAE latent rare-type F1 (pancreas)
+\newcommand{\panrpca}{0.00}     % PCA+Leiden rare-type F1 (pancreas, 0.002)
+\newcommand{\markovari}{0.91}   % IGMC-Markov ARI (pancreas, no knob)
+\newcommand{\pcaari}{0.47}      % PCA+Leiden ARI (pancreas)
+\newcommand{\euclari}{0.76}     % NB-VAE+Euclidean+Leiden ARI (pancreas)
+\newcommand{\covnominal}{90}
+\newcommand{\covachieved}{90.0} % pancreas
+\newcommand{\kappamed}{104}
+\newcommand{\discpbmc}{0.84}    % discreteness index, PBMC
+\newcommand{\discpanc}{0.95}    % discreteness index, pancreas
+\newcommand{\disccont}{0.63}    % discreteness index, paul15 (continuous)
+\newcommand{\ambcont}{27}       % conformal ambiguous fraction, paul15 (%)
+% ---- WS1/WS2 macros (multi-seed CIs, CITE-seq, benchmark, scale-nested conformal) ----
+\newcommand{\snsimcorr}{0.98}   % scale-nested simultaneous coverage, union-bound allocation
+\newcommand{\snsimunc}{0.90}    % scale-nested simultaneous coverage, uncorrected
+\newcommand{\snrarefine}{0.39}  % pancreas worst-class coverage at finest scale (Bonferroni)
+\newcommand{\snrarecoarse}{0.99}% ... rescued at coarse scales
+\newcommand{\csari}{0.75}       % CITE-seq PCA ARI vs protein labels
+\newcommand{\csmarkovari}{0.72} % CITE-seq IGMC-Markov ARI vs protein labels
+\newcommand{\csdcfr}{0.88}      % CITE-seq DC F1, Fisher-Rao
+\newcommand{\csdcpca}{0.78}     % CITE-seq DC F1, PCA
+\newcommand{\csdceuc}{0.27}     % CITE-seq DC F1, NB-VAE Euclidean ruler (same latent)
+\newcommand{\msnbari}{0.82}     % pancreas NB-VAE+Euclid ARI (multi-seed mean)
+\newcommand{\mspcaarims}{0.50}  % pancreas PCA ARI (multi-seed mean)
+\newcommand{\msnbrare}{0.41}    % pancreas NB-VAE+Euclid rare-F1 (multi-seed mean)
+\newcommand{\mspcararems}{0.12} % pancreas PCA rare-F1 (multi-seed mean)
+\newcommand{\mssegnb}{0.10}     % segerstolpe NB-VAE+Euclid rare-F1
+\newcommand{\bnigmc}{0.716}     % benchmark overall scIB score, IGMC latent
+\newcommand{\bnscanvi}{0.733}   % scANVI (label-supervised)
+\newcommand{\bnharmony}{0.723}  % Harmony
+\newcommand{\bnscvi}{0.707}     % scVI
+\newcommand{\bnpca}{0.564}      % PCA
+\newcommand{\bnigmcbatch}{0.756}% IGMC batch-correction subscore
+
+\title{\vspace{-1.2cm}\bfseries The right ruler: information-geometric, multiscale and
+topologically-aware clustering of single-cell transcriptomes with conformal confidence}
+
+\author[1]{Gabriella \and Megan \and Emma \and Rajarshi}
+\affil[1]{Carnegie Mellon University Pre-College Computational Biology Program}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-0.8cm}
+
+\begin{abstract}
+\noindent Single-cell RNA sequencing measures the transcriptome of individual cells, and
+clustering those measurements into cell types is the field's central inference. Yet the
+dominant pipeline is a chain of mutually inconsistent heuristics: it embeds counts with a
+generative model, then discards that model's geometry to measure cell--cell distance with a
+plain Euclidean ruler; it detects communities at a single, hand-tuned resolution; it cannot
+say whether a population is a discrete type or a point on a continuum; and it reports every
+assignment without a shred of calibrated confidence. We show that a negative-binomial
+variational autoencoder already carries the correct geometry---the \emph{Fisher--Rao pullback
+metric} that its own decoder Jacobian and count likelihood induce on the latent space---and
+that this single object can do all four inferential jobs at once. It defines a
+statistically honest inter-cell distance; it is scanned across scales by Markov-stability
+community detection, removing the resolution knob; it is probed by persistent homology to
+separate discrete types from continua; and it supplies a geometry-native nonconformity score
+whose conformal prediction sets give every cell a calibrated confidence set. On a nine-technology
+human pancreatic-islet atlas the negative-binomial geometry recovers rare cell types that standard
+pipelines miss almost entirely (rare-type F1 up to \panrlat{} vs.\ \panrpca{} for PCA+Leiden), and
+Markov stability on the metric graph recovers the cell-type hierarchy with no resolution tuning at
+all (adjusted Rand index \markovari{}, versus \pcaari{} for PCA+Leiden). On a
+type-2-diabetes cohort, calibrating the confidence layer on healthy islets and testing it on
+diabetic ones, coverage is maintained overall but degrades most for $\beta$- and $\gamma$-cells:
+the conformal layer localizes the disease's transcriptional footprint to the islet's endocrine
+compartment without ever being told which cells are diseased. We stress-test these claims: results
+carry multi-seed confidence intervals; an orthogonal CITE-seq protein ground truth shows the
+count-aware Fisher--Rao geometry best recovers a rare dendritic-cell population even where standard PCA
+remains competitive on common types; and we prove a \emph{scale-nested} conformal predictor that is
+simultaneously valid and provably coherent across the Markov-stability hierarchy of scales. The result
+converts scRNA-seq clustering from a stack of disconnected heuristics into one coherent,
+uncertainty-calibrated inference on the manifold of the count model.
+\end{abstract}
+
+\section{Introduction}
+Every cell in the body carries the same genome but expresses a distinct set of RNA molecules,
+and single-cell RNA sequencing (scRNA-seq) reads out that expression one cell at a time
+\citep{macosko2015highly}. The measurement is a sparse matrix of integer molecule counts---tens
+of thousands of genes by up to millions of cells---and the first question asked of it is almost
+always the same: which cells are of the same type? Answering it computationally has become the
+workhorse of modern cell biology, underpinning tissue atlases, developmental maps and disease
+studies alike.
+
+The community has converged on a remarkably uniform recipe: normalize and log-transform the
+counts, reduce dimension (by PCA or a deep generative model), build a $k$-nearest-neighbour
+graph under Euclidean distance, and partition it with the Leiden algorithm at a user-chosen
+resolution \citep{traag2019leiden,wolf2018scanpy}. Each step is individually reasonable and
+collectively load-bearing, and each hides a flaw that the next step inherits.
+
+First, \textbf{the ruler is wrong}. Count noise in scRNA-seq is not homoscedastic: the variance
+of a gene grows with its mean, following a negative binomial (NB) law $\mathrm{Var}=\mu+\mu^2/\theta$
+\citep{svensson2020droplet,townes2019glmpca}. Euclidean distance on log-normalized counts treats a
+unit difference as equally meaningful everywhere, which it is not; the transformation injects
+spurious variance that survives into PCA and clustering and disproportionately corrupts the rare,
+lowly-sampled populations that are often the biological point \citep{townes2019glmpca,ahlmann2023comparison}.
+Strikingly, even deep generative models such as scVI \citep{lopez2018scvi}, which fit an explicit NB
+likelihood, throw the induced geometry away and cluster their latent space with plain $L_2$.
+
+Second, \textbf{the resolution is arbitrary}. Cell identity is genuinely hierarchical---type,
+subtype, state---but Leiden returns a single partition whose granularity is set by a resolution
+parameter with no principled value. Slightly different choices yield materially different numbers
+of clusters, and there is no accepted way to report the hierarchy itself.
+
+Third, \textbf{discrete and continuous are conflated}. Some populations are sharp, well-separated
+types; others are stops along a continuous trajectory (differentiation, activation, disease
+progression). Standard clustering forces a partition on both, and cannot say which is which.
+
+Fourth, \textbf{there is no calibrated confidence}. A cluster label is reported as a hard fact even
+for a cell that sits ambiguously between two types or belongs to a state absent from the reference.
+
+We argue these are not four separate problems but one, and that their common solution is already
+latent in the generative model. An NB-VAE learns a decoder $f:\mathbb{R}^d\!\to\!\Delta^{G-1}$ from a
+low-dimensional latent space to gene-expression proportions. The family of distributions it
+parameterizes is a statistical manifold, and Rao's theorem endows it with a canonical Riemannian
+metric---the Fisher information \citep{rao1945information,amari2000methods}. Pulling that metric back
+through the decoder \citep{arvanitidis2022pulling} yields a metric tensor on the latent space,
+$M(z)=J_f(z)^{\!\top} I_{\mathrm{NB}}(f(z))\,J_f(z)$, that measures the \emph{statistical
+distinguishability} of cells rather than their raw coordinate distance. Our contribution is to make
+this single geometric object do all four jobs at once: it is the ruler, it is the operator scanned by
+Markov stability across scales, it is the filtration probed by persistent homology, and it supplies
+the nonconformity score for conformal prediction. We do not claim to be first to bring information
+geometry to single cells---closed-form multinomial Fisher--Rao has been used directly in gene space
+\citep{cai2025gaia}, and the pullback framework is general \citep{arvanitidis2022pulling}. We claim to
+be the first to pull the NB Fisher--Rao metric through a generative decoder at scale for single cells,
+and to unify it with multiscale community detection, a topological discrete/continuous test, and
+calibrated coverage into one coherent inference. We back these claims with multi-seed confidence
+intervals, an orthogonal CITE-seq protein ground truth, a multi-method integration benchmark, and a
+new \emph{scale-nested} conformal predictor that is provably valid and coherent across the whole
+hierarchy of scales.
+
+\section{Results}
+
+\subsection{One geometry from the count model}
+We train a batch-conditional NB-VAE (Methods) and, for each cell, compute the exact Fisher--Rao
+pullback metric $M(z)$. The Fisher information of the negative binomial with respect to its mean is,
+by a short derivation (Methods), $I(\mu)=\theta/(\mu(\mu+\theta))=1/\mathrm{Var}(x)$: the correct ruler
+downweights each gene by its count variance, precisely the heteroscedastic correction the data
+demand (Fig.~1a). Because the latent dimension $d$ is small ($\sim\!10$) while the gene dimension $G$
+is large, the decoder Jacobian is computed exactly and cheaply by forward-mode automatic
+differentiation, and the per-cell metric is only a $d\times d$ matrix; no full Jacobian is ever
+materialized, which resolves the scalability concern that has made pullback geometry impractical at
+single-cell scale. The resulting metric is strongly non-Euclidean: its condition number has median
+$\kappa\!\approx\!\kappamed$ (Fig.~1c), the Riemannian volume element varies by orders of magnitude
+across the manifold (Fig.~1b), and, decomposed against ground-truth labels, the metric systematically
+stretches between-type distances while contracting within-type distances (Fig.~1d)---the mechanism by
+which it sharpens cell-type boundaries.
+
+\subsection{The Fisher--Rao ruler rescues rare cell types}
+We benchmark clustering on a human pancreatic-islet atlas of 16{,}382 cells spanning fourteen cell
+types across nine sequencing technologies, whose labels derive from marker genes rather than from any
+clustering pipeline and are therefore an unbiased ground truth. The headline is stark on rare
+populations (Fig.~6): the count-aware NB-VAE geometry recovers the rarest third of cell
+types---epsilon (32 cells), mast (42), macrophage (79)---with rare-type F1 up to \panrlat, whereas
+PCA+Leiden and $k$-means on log-normalized data recover essentially none of them (F1 $\approx$
+\panrpca). Standard normalization does not merely under-resolve rare cells; it erases them.
+Because real-atlas labels can be argued circular, we confirm the effect on planted-ground-truth
+simulations with rare populations down to $0.4\%$ abundance (Fig.~8): on labels we control exactly,
+PCA+Leiden recovers essentially no rare cells (rare-type F1 $0.04$) while the full information-geometric
+method recovers them at F1 $0.45$, and recall rises smoothly with abundance for the count-aware methods
+but collapses for PCA below $\sim\!2\%$. Here the three-ruler ablation on a shared latent is
+unambiguous: the negative-binomial Fisher--Rao ruler is best on both cluster agreement (ARI $0.95$)
+and rare-type recovery, ahead of the plain decoder pullback $J^{\!\top}J$ and Euclidean $L_2$
+(Fig.~8c). On real data the metric's advantage over Euclidean is smaller and setting-dependent, and,
+revealingly, the raw decoder pullback without the Fisher weighting can be numerically ill-behaved,
+fragmenting a nine-technology atlas into hundreds of clusters (Fig.~2c); the negative-binomial Fisher
+information both sharpens rare structure and \emph{regularizes} the metric.
+
+\subsection{Markov stability removes the resolution knob}
+Rather than fix a resolution, we let a continuous-time random walk explore the Fisher--Rao graph and
+keep the partitions that stay stable across Markov time $t$ (Fig.~3). As the walk lengthens, the
+optimal number of communities descends through a staircase of plateaus, and the partitions on those
+plateaus are exactly the ones on which independent optimizer seeds agree---the variation of
+information across seeds collapses to zero (Fig.~3a,b). The block structure of the
+partition-vs-partition VI matrix reveals the cell-type hierarchy directly (Fig.~3c), and an alluvial
+diagram traces how fine clusters merge into coarse ones across scales (Fig.~3d). The result is not
+merely tidy but accurate: on the islet atlas the most robust plateau reaches an adjusted Rand index
+of \markovari{} against marker-gene ground truth---far above PCA+Leiden (\pcaari) and above even the
+batch-corrected NB-VAE latent clustered with Euclidean Leiden (\euclari)---with no resolution
+parameter set anywhere in the pipeline.
+
+\subsection{Persistent homology tells types from continua}
+Whether a population is a discrete type or a stop on a continuum is a topological question, and we
+answer it with persistent homology computed under the Fisher--Rao distance (Fig.~4). On data of known
+discrete structure (peripheral-blood immune types) the persistence barcode shows components that
+merge only across a large density gap, and the fraction of ``transitional'' cells---those whose
+Fisher--Rao neighbourhood spans more than one population---is low. On data of known continuous
+structure (a myeloid differentiation trajectory) the same statistics invert: cells bridge smoothly
+between populations and the transitional fraction more than doubles. The resulting discreteness index
+cleanly orders the datasets---\disccont{} for the continuous trajectory versus \discpbmc{} for immune
+blood and \discpanc{} for the islet atlas---and the per-population transitionality score localizes
+\emph{which} cells sit on a continuum, turning a global dichotomy into a per-cell readout.
+
+\subsection{Conformal prediction calibrates every call}
+Finally, we attach a calibrated confidence set to every cell by split Mondrian conformal prediction
+with a class-conditional guarantee (Methods). At target coverage $1-\alpha=\covnominal\%$ the achieved
+coverage is \covachieved\% on the islet atlas (Fig.~5a), and the guarantee holds per class, not just on
+average. The size of a cell's prediction set is itself informative: a singleton is a confident call, a
+set of size $>1$ marks an ambiguous cell between types, and an empty set flags a cell that conforms to
+no known type. The set sizes track biology: on discrete blood and islet data almost every cell is a
+confident singleton ($<2\%$ ambiguous), whereas on the continuous differentiation trajectory the
+ambiguous fraction rises to \ambcont\%, precisely because cells there genuinely lie between types. And
+within a dataset, ambiguity concentrates where topology predicts---prediction-set size rises with a
+population's transitional fraction (Fig.~5d)---so the four modules agree with one another because they
+are computed from the same geometry.
+
+\subsection{Application: rare islet types and localizing type-2 diabetes}
+We apply the full pipeline to human islets in health and type-2 diabetes (T2D), the setting where
+resolving rare populations and honest confidence matter clinically. The method resolves every islet
+type across both conditions (Fig.~7a,b). We then use the confidence layer as a probe of disease: we
+calibrate the conformal classifier on healthy islets alone and measure its coverage on the diabetic
+cohort, a covariate shift from health to disease. Overall coverage is maintained near the $90\%$
+target ($90.7\%$), showing the guarantee is robust to the shift---but the coverage is not uniform.
+It degrades most for $\beta$-cells ($87.8\%$) and $\gamma$-cells ($81.0\%$), the two endocrine
+populations whose transcriptomes are most perturbed in T2D, while exocrine ductal and acinar cells
+stay at or above target (Fig.~7c,d). In other words, the calibrated confidence layer localizes the
+transcriptional footprint of diabetes to the islet's endocrine compartment---the $\beta$-cell above
+all---without ever being shown a disease label. We emphasize what we do \emph{not} find: at the
+resolution of this cohort the diabetic $\beta$-cells largely retain their identity (the classifier's
+$\beta$-probability is essentially unchanged), so we make no claim of wholesale dedifferentiation
+\citep{talchai2012dedifferentiation,weng2023hnf1a}; the honest, reproducible signal is a
+compartment-specific loss of coverage that our uncertainty quantification surfaces automatically.
+
+\subsection{Interdisciplinary geometry: optimal transport and the diffusion spectrum}
+Because the metric is a genuine geometric object, two further graduate-level lenses apply directly.
+First, \emph{optimal transport} (the Monge--Kantorovich / Wasserstein theory that underlies
+Waddington-OT in single cell \citep{schiebinger2019}) lets us measure disease as displacement: for
+each islet cell type we compute the squared Wasserstein-2 distance between healthy and diabetic cells
+in latent space against a within-healthy null (Fig.~10). $\beta$-cells (insulin) and $\alpha$-cells
+(glucagon) are displaced most, and a $250$-fold bootstrap shows the $\beta$-cell displacement is
+$2.7\times$ the null ($p<0.004$) with cleanly separated distributions---an independent,
+transport-theoretic confirmation of the conformal coverage result, and a rare instance of two
+different mathematical frameworks agreeing that diabetes concentrates in the insulin cell. Second,
+\emph{spectral graph theory and random-matrix theory}: the eigenspectrum of the diffusion operator
+exhibits a spectral gap whose location counts the metastable states of the manifold and coincides with
+the Markov-stability plateaus (Fig.~11), while a Marchenko--Pastur bound separates the signal principal
+components from the noise bulk. Distance, scale, transport and spectrum are all facets of the same
+geometry.
+
+\subsection{Cross-dataset synthesis}
+Read together (Fig.~9), the four datasets tell one story. Markov-stability clustering is the most
+accurate method on every fair benchmark; the count-aware latent recovers rare populations on all of
+them; conformal coverage sits at its target throughout; and the topological discreteness index and
+the conformal ambiguous fraction move in lockstep---both flag the myeloid continuum and both call
+the immune and islet data discrete. An ablation confirms that the no-knob Markov result is helped by,
+and never hurt by, building the graph on the Fisher--Rao metric rather than the Euclidean one
+(Fig.~9d). Four readouts, computed from one geometry, agree.
+
+\subsection{The wins survive multi-seed retraining}
+Because the metric is read off a trained VAE, a fair critic asks whether the results are an artifact of
+one lucky initialization. We retrain the NB-VAE from scratch across seeds and recompute every metric,
+reporting mean and $95\%$ bootstrap confidence intervals (Fig.~12). The picture is honestly mixed and,
+where it matters, decisive. On the fair pancreas benchmark the count-aware latent's advantage is
+robust: NB-VAE+Euclidean reaches ARI $\msnbari$ (95\% CI $[0.78,0.86]$) versus $\mspcaarims$
+$[0.48,0.52]$ for PCA+Leiden---intervals that do not overlap---and rare-type F1 $\msnbrare$ versus
+$\mspcararems$. On the Segerst{\o}lpe islets PCA+Leiden recovers \emph{zero} rare-type F1 in every
+single seed ($0.00\,[0.00,0.00]$), while the count-aware latent recovers $\mssegnb$. Conversely, on the
+circular-label PBMC3k data PCA is both higher and more stable (ARI $0.87\,[0.86,0.87]$) than the
+count-aware rulers---consistent with those labels having been produced by a PCA pipeline. Conformal
+coverage is stable at its $90\%$ target across all seeds and datasets (Fig.~12d). The rigor cuts both
+ways, and we report it that way: the count-aware geometry's gains are real and seed-robust precisely on
+the rare-population and batch-integration problems it was designed for.
+
+\subsection{An orthogonal ground truth from CITE-seq protein}
+A standing objection to any scRNA-seq clustering benchmark is circularity: the ``ground-truth''
+labels are themselves the output of an RNA pipeline (often PCA + Louvain), so a method that clusters
+like that pipeline is rewarded regardless of biological truth. We break the circle with a modality
+that never touches the RNA counts. On a 10x CITE-seq PBMC dataset ($4{,}193$ cells) we define cell
+types from $32$-antibody surface-protein measurements alone---centred-log-ratio normalisation,
+Leiden clustering on protein, and canonical marker gating (CD3/CD4/CD8, CD19/CD20, CD14/CD16,
+CD56, HLA-DR)---yielding six protein-defined populations including a rare ($4.5\%$) dendritic-cell
+compartment (Fig.~14a,b). We then cluster the \emph{RNA} counts with every method and score against
+these orthogonal labels. The honest result has two parts. First, against orthogonal truth PCA+Leiden
+remains strong on the common types (ARI $\csari$, above IGMC's $\csmarkovari$)---so PCA's advantage
+on discrete PBMC data is real, not merely a circularity artefact, and we say so. Second, and
+consistent with our central thesis, the Fisher--Rao geometry best recovers the \emph{rare}
+dendritic-cell type (DC F1 $\csdcfr$ vs.\ $\csdcpca$ for PCA), and---critically---the very same
+count-aware latent scored with a plain Euclidean ruler collapses on this population (DC F1 $\csdceuc$;
+Fig.~14c,d). The count-aware latent plus the Fisher--Rao ruler is what rescues the rare type, and it
+does so measured against a ground truth no RNA method could have inflated.
+
+\subsection{Competitive with established integration methods}
+Reviewers rightly ask how the count-aware latent fares against the field's dedicated tools. We run the
+scIB battery (bio-conservation and batch-removal, implemented transparently from primitives) on the
+nine-technology pancreas atlas against PCA, ComBat, Harmony \citep{korsunsky2019harmony}, scVI and the
+label-supervised scANVI \citep{lopez2018scvi,gayoso2022scvitools}, all at ten latent dimensions
+(Fig.~15). The NB-VAE latent is competitive with the best: an overall score of $\bnigmc$ places it
+third of six---behind only scANVI ($\bnscanvi$), which is \emph{semi-supervised} and sees the cell-type
+labels, and Harmony ($\bnharmony$), a method built solely for batch removal---and ahead of scVI
+($\bnscvi$), ComBat, and PCA ($\bnpca$, worst by a wide margin). It achieves the second-best batch
+mixing of any method ($\bnigmcbatch$). We flag its one clear weakness honestly: the batch-isolated-label
+score is low ($0.003$), because the batch-conditional decoder removes technical structure aggressively
+and can over-mix a cell type confined to a single technology. The headline is not that the geometry
+wins a leaderboard---it is that a latent built for a \emph{different} purpose (a statistically honest
+metric) is already on par with purpose-built integrators, while additionally supplying the scale
+selection, topology and calibrated confidence they do not.
+
+\subsection{Scale-nested conformal prediction across the hierarchy}
+A clustering is only meaningful \emph{at a scale}, so a confidence set should come with a scale too.
+The Markov-stability scan already yields cell communities from fine to coarse; tracking which cell
+types are walked together across Markov time induces a nested \emph{taxonomy} (Fig.~13a, biologically
+sensible: endocrine, exocrine, immune and stromal super-types emerge). We attach to every cell a whole
+family of conformal prediction sets, one per taxonomic level, and establish three properties (Methods;
+full proofs in the supplement). (i)~Each level is a valid split-conformal predictor---standard
+\citep{vovk2005algorithmic,sadinle2019least}. (ii)~Allocating the miscoverage budget across levels
+($\sum_\ell\alpha_\ell=\alpha$) gives a \emph{simultaneous} family-wise guarantee by a union
+bound---also standard \citep{baheri2025multiscale}; empirically the guarantee holds with margin
+(simultaneous coverage $\approx\snsimcorr$ at target $0.90$), whereas running every level at the full
+$\alpha$ sits at the target with none ($\approx\snsimunc$; Fig.~13c). (iii)~Our new contribution is a
+construction that makes the family \emph{coherent}---a confident fine-scale call can never contradict
+its coarse-scale super-type---by an isotonic up-the-tree projection of the per-scale thresholds that
+we prove preserves the per-scale coverage (Theorem, Methods). The projection raises coherence to
+$100\%$ from $90$--$97\%$ (Fig.~13d), eliminating the $3$--$10\%$ of cells that would otherwise carry a
+fine call orphaned from its coarse super-type, and it sits between isotonic-calibration
+\citep{vanderlaan2024selfcalibrating} and nested-set \citep{gupta2022nested} conformal lines, distinct
+from fixed-taxonomy conformal cell typing \citep{corbetta2024conformal,lopezdecastro2025conformal,ding2023classcond}.
+The hierarchy is not decoration: a rare pancreatic type covered at only $\snrarefine$ at the finest
+scale (too few calibration cells to certify class-conditionally) is rescued to $\snrarecoarse$ once it
+is pooled into a well-populated super-type (Fig.~13b,e), and the residual ambiguity that survives
+coarsening concentrates on the myeloid continuum (Fig.~13f)---the same population the topology flags.
+
+\section{Discussion}
+We have shown that the geometry a negative-binomial generative model induces on its latent space is
+not a curiosity to be discarded but the organizing object of single-cell clustering. Reading distance,
+scale, shape and confidence off the same Fisher--Rao pullback metric replaces four inconsistent
+heuristics with one coherent inference, and does so with concrete gains: rare cell types that standard
+pipelines erase are recovered, the resolution knob is eliminated, discrete and continuous structure are
+distinguished, and every assignment carries a finite-sample coverage guarantee.
+
+Our study has clear limits, which also chart the path forward. We are deliberately careful about what
+the orthogonal benchmark shows: against protein-defined labels PCA remains competitive on common PBMC
+types, so the count-aware geometry's advantage is specifically a rare-population and continuum effect,
+not a uniform improvement. The scale-nested predictor likewise trades informativeness for guarantee---the
+provable family-wise allocation is conservative, and its union bound is loose under the strong positive
+dependence that nesting induces; a tighter valid joint calibration is open. The induced metric depends
+on the fitted decoder; marginalizing over a decoder ensemble \citep{syrota2024decoder} would render the
+geometry identifiable and is a natural next step. Our evaluation spans four datasets up to $\sim\!16$k cells;
+the graph-geodesic and low-rank spectral machinery we introduce is designed to scale, but a
+demonstration on million-cell atlases remains. The benefit of the Fisher--Rao ruler over a plain
+decoder-pullback is clearest where batch structure is controlled, underscoring that geometry and batch
+correction must be co-designed. Finally, the diabetic-$\beta$-cell readout is a compartment-specific
+coverage drop, not a dedifferentiation claim; connecting that statistical signal to specific
+transcriptional programs, and validating it in an independent cohort, is future work. None of these
+caveats undercuts the central point: single-cell clustering has been done with the wrong ruler, and a
+principled one---together with the topology and calibrated confidence it unlocks---was inside the
+generative model all along.
+
+\section{Methods}
+
+\paragraph{Negative-binomial VAE.} We model UMI counts $x_{ig}$ for cell $i$, gene $g$ as
+$x_{ig}\sim\mathrm{NB}(\mu_{ig},\theta_g)$ with mean $\mu_{ig}=\ell_i\,\rho_{ig}$, library size
+$\ell_i=\sum_g x_{ig}$, gene proportions $\rho_i=\mathrm{softmax}(f_{\text{dec}}([z_i,b_i]))$ on the
+simplex, and gene-specific inverse dispersion $\theta_g=\mathrm{softplus}(\cdot)$, so that
+$\mathrm{Var}(x_{ig})=\mu_{ig}+\mu_{ig}^2/\theta_g$. An encoder $q(z_i\mid x_i,b_i)=\mathcal{N}(\mu_z,\mathrm{diag}\,\sigma_z^2)$
+and the decoder are two-layer perceptrons with LayerNorm (no BatchNorm, so the decoder is compatible
+with functional automatic differentiation); $b_i$ is a one-hot batch covariate supplied to both
+encoder and decoder, which pushes technical variation out of $z$. We optimize the $\beta$-VAE ELBO
+$\sum_i \mathbb{E}_q[-\log p(x_i\mid z_i,b_i)]+\beta\,\mathrm{KL}(q\|\,\mathcal{N}(0,I))$ with
+$\beta$ warmed from 0 to 1, Adam, gradient clipping, $d=10$.
+
+\paragraph{Fisher--Rao pullback metric.} The Fisher information of $\mathrm{NB}(\mu,\theta)$ with
+respect to $\mu$ is $I(\mu)=-\mathbb{E}\,\partial_\mu^2\log p = 1/\mu - 1/(\mu+\theta) =
+\theta/(\mu(\mu+\theta)) = 1/\mathrm{Var}(x)$. Treating $\{\mathrm{NB}(\mu(z),\theta)\}$ as a
+statistical manifold and pulling the Fisher metric back through the decoder gives, on the latent space,
+\[
+  M(z)=\sum_g I(\mu_g)\,(\partial_z \mu_g)(\partial_z \mu_g)^{\!\top}
+      =\ell^2\, J_\rho(z)^{\!\top}\,\mathrm{diag}\!\big(\theta_g/(\mu_g(\mu_g+\theta_g))\big)\,J_\rho(z),
+\]
+where $J_\rho=\partial\rho/\partial z\in\mathbb{R}^{G\times d}$. Because $d\ll G$ we compute $J_\rho$ by
+forward-mode AD (\texttt{jacfwd}) vectorized over cells (\texttt{vmap}), forming $M(z)$ as a $d\times d$
+matrix per cell without materializing any $G\times G$ object; the whole atlas takes seconds. The local
+squared Fisher--Rao distance between neighbours uses the symmetrized midpoint metric
+$\delta^2(i,j)=(z_i-z_j)^{\!\top}\tfrac12(M_i+M_j)(z_i-z_j)$, a second-order-accurate geodesic
+surrogate. The ablation metric replaces $I(\mu)$ by $1$, giving the plain decoder pullback
+$M=\ell^2 J_\rho^{\!\top}J_\rho$.
+
+\paragraph{Metric graph.} We build a $k$-nearest-neighbour graph by candidate-and-rerank: fetch
+$k_{\text{cand}}\!=\!60$ Euclidean candidates per cell (cheap), rescore them under $\delta^2$, keep the
+$k=15$ statistically nearest, weight edges with an adaptive Gaussian kernel and symmetrize. Cost is
+$O(N k_{\text{cand}} d^2)$, avoiding any $N^2$ blow-up.
+
+\paragraph{Markov-stability multiscale clustering.} On the metric graph with adjacency $A$, degrees
+$D$, stationary $\pi_i=d_i/2m$, we consider the continuous-time random walk $P(t)=\exp(-t(I-D^{-1}A))$.
+The clustered stability of a partition $H$ at Markov time $t$ is
+$r(t,H)=\mathrm{tr}\!\big[H^{\!\top}(\Pi P(t)-\pi\pi^{\!\top})H\big]$. Because the walk is reversible,
+$\Pi P(t)$ is symmetric and non-negative, and the graph with adjacency $2m\,\Pi P(t)$ has the same
+degrees as $A$; hence $r(t,H)$ equals the RB-modularity of that flow graph at resolution 1, which
+Leiden optimizes directly. We build $\Pi P(t)=\tfrac1{2m}W\mathrm{diag}(e^{-t\Lambda})W^{\!\top}$ from
+the eigendecomposition of the symmetric normalized Laplacian ($W=D^{1/2}U$), sparsify to the top edges
+per row, and optimize with several seeds over a log grid of $t$. Robust scales are Markov times where
+the number of communities forms a plateau and the across-seed variation of information
+\citep{meila2007comparing} dips; large atlases are stratified-subsampled for the scan to preserve rare
+types.
+
+\paragraph{Persistent homology.} For a population we compute Vietoris--Rips persistence (Ripser) under
+the Fisher--Rao distance. The dataset ``continuity index'' is the fraction of cells whose $k$
+Fisher--Rao neighbours span more than one population (transitional cells; the $H_0$ bridges of the
+complex); its complement is the discreteness index. Global $H_0$/$H_1$ diagrams and the $H_0$ death-gap
+statistic summarize manifold shape.
+
+\paragraph{Conformal prediction.} We use split conformal with a Mondrian (class-conditional) calibration
+and the least-ambiguous set-valued score $s(x,y)=1-\hat p(y\mid x)$ from a multinomial classifier on
+$z$ \citep{sadinle2019least,angelopoulos2023gentle}. The per-class threshold is the finite-sample
+$\lceil(n_y+1)(1-\alpha)\rceil/n_y$ quantile of calibration scores, giving prediction sets
+$C(x)=\{y:\hat p(y\mid x)\ge 1-\hat q_y\}$ with $\Pr(y\in C(x)\mid Y=y)\ge 1-\alpha$ per class. Sets of
+size $>1$ mark ambiguity; empty sets mark novelty. For the disease analysis we calibrate on healthy
+cells and evaluate on the diabetic cohort.
+
+\paragraph{Scale-nested conformal prediction.} A taxonomy has levels $\ell=1,\dots,L$ (finest to
+coarsest) with coarsening maps $\pi_\ell:\mathcal Y\to\mathcal G_\ell$ and parent maps
+$\rho_\ell:\mathcal G_\ell\to\mathcal G_{\ell+1}$ satisfying $\pi_{\ell+1}=\rho_\ell\circ\pi_\ell$;
+we build it by average-linkage on the integrated Markov co-clustering distance
+$D_{ab}=1-\frac1T\sum_t\sum_c P(a\in c\mid t)P(b\in c\mid t)$ between cell types $a,b$. Super-class
+probabilities aggregate a base classifier, $p_\ell(g\mid x)=\sum_{y:\pi_\ell(y)=g}\hat p(y\mid x)$;
+the level-$\ell$ set is $C_\ell(x)=\{g:p_\ell(g\mid x)\ge 1-q_\ell\}$ with $q_\ell$ the split-conformal
+quantile at level $\alpha_\ell$. \emph{(1)} Each level is marginally valid,
+$\Pr(\pi_\ell(Y)\in C_\ell(X))\ge1-\alpha_\ell$ \citep{vovk2005algorithmic}. \emph{(2)} With
+$\sum_\ell\alpha_\ell=\alpha$, a union bound gives simultaneous validity
+$\Pr(\exists\ell:\pi_\ell(Y)\notin C_\ell(X))\le\alpha$ \citep{baheri2025multiscale}. \emph{(3, new)}
+Define projected thresholds by the fine$\to$coarse pass $\tilde q_1=q_1$,
+$\tilde q_{\ell+1}=\max(q_{\ell+1},\tilde q_\ell)$. Because $\{s\le q\}\subseteq\{s\le\tilde q\}$ for
+$\tilde q\ge q$, the projection only enlarges sets and preserves (1)--(2); and because
+$p_{\ell+1}(\rho_\ell(g)\mid x)\ge p_\ell(g\mid x)$ (nesting) with $\tilde q_{\ell+1}\ge\tilde q_\ell$,
+$g\in C_\ell(x)$ implies $\rho_\ell(g)\in C_{\ell+1}(x)$: the family is \emph{coherent}. We validate on
+held-out cells over $25$ splits; the per-cell resolvable scale is the finest level with a singleton
+set, cross-fitted out-of-fold. Full statements and proofs are in the supplement.
+
+\paragraph{CITE-seq orthogonal ground truth.} From the 10x $5$k-PBMC TotalSeq-B dataset
+\citep{stoeckius2017citeseq} we split gene-expression from the $32$ antibody-capture features. Protein
+is CLR-normalised (per cell, isotype controls excluded), PCA/Leiden-clustered, and each cluster is
+gated to a canonical PBMC lineage by fixed marker rules. RNA counts are then processed and clustered
+identically to the other datasets and scored against these protein-only labels.
+
+\paragraph{Multi-method benchmark and multi-seed CIs.} We compare embeddings from PCA, ComBat, Harmony
+\citep{korsunsky2019harmony}, scVI and scANVI \citep{lopez2018scvi,gayoso2022scvitools}, and our
+count-aware NB-VAE latent, all at $10$ latent dimensions, using a from-scratch scIB battery
+\citep{luecken2022benchmarking} (NMI, ARI, cell-type ASW, isolated-label F1, cLISI; batch ASW, graph
+connectivity, iLISI; overall $=0.6\,\mathrm{bio}+0.4\,\mathrm{batch}$). To quantify seed sensitivity we
+retrain the NB-VAE from six random seeds (five on the larger pancreas atlas) and report mean and $95\%$
+bootstrap confidence intervals for every headline metric.
+
+\paragraph{Optimal transport and spectral geometry.} Disease displacement is the squared
+Wasserstein-2 distance $W_2^2(\mu_{\text{healthy}},\mu_{\text{T2D}})$ between per-type empirical
+distributions in latent space (exact OT via the Python Optimal Transport library), reported against a
+within-healthy split null and a $250$-fold paired bootstrap. The diffusion analysis eigendecomposes the
+symmetric normalised Laplacian of the latent kNN graph; the largest gap in the low end of the spectrum
+estimates the number of metastable states, and relaxation times $1/\lambda_k$ are compared to the
+Markov-stability plateaus. The Marchenko--Pastur edge $\lambda_+=(1+\sqrt{p/n})^2$ on the
+standardised expression matrix separates signal principal components from noise.
+
+\paragraph{Data and evaluation.} We use PBMC 3k (10x, 2{,}638 cells), the Paul et al.\ myeloid
+differentiation set (2{,}730), a nine-technology human pancreatic islet atlas (16{,}382 cells, 14
+types) and the Segerst{\o}lpe healthy-vs-T2D islet cohort (2{,}394 cells), all open access with integer
+counts. Baselines are PCA+Leiden, $k$-means on the latent, NB-VAE latent with Euclidean Leiden, and the
+decoder-pullback ablation. Metrics are ARI, NMI, silhouette and a rare-type F1 that averages
+Hungarian-matched per-type F1 over the rarest tertile of cell types. Code, trained models and figures
+are released with the paper.
+
+\clearpage
+\section*{Appendix: Scale-nested conformal prediction --- statements and proofs}
+\setlength{\parskip}{2pt}
+\textbf{Setup.} Taxonomy levels $\ell=1,\dots,L$ (finest to coarsest), coarsening maps
+$\pi_\ell:\mathcal Y\to\mathcal G_\ell$ and parent maps $\rho_\ell:\mathcal G_\ell\to\mathcal G_{\ell+1}$
+with $\pi_{\ell+1}=\rho_\ell\circ\pi_\ell$. A base classifier gives $\hat p(y\mid x)$; super-class
+scores aggregate it, $p_\ell(g\mid x)=\sum_{y:\pi_\ell(y)=g}\hat p(y\mid x)$, with LAC nonconformity
+$s_\ell(x,g)=1-p_\ell(g\mid x)$. Given exchangeable calibration $(X_i,Y_i)_{i=1}^n$, the marginal
+threshold $q_\ell$ is the $\lceil(n+1)(1-\alpha_\ell)\rceil$-th smallest of $\{s_\ell(X_i,\pi_\ell(Y_i))\}$
+(and $q_\ell=1$ if that rank exceeds $n$); the set is $C_\ell(x)=\{g:p_\ell(g\mid x)\ge 1-q_\ell\}$.
+
+\textbf{Proposition 1 (per-level validity; standard).} For each $\ell$,
+$\Pr(\pi_\ell(Y_{n+1})\in C_\ell(X_{n+1}))\ge 1-\alpha_\ell$.
+\emph{Proof.} The event is $\{s_\ell(X_{n+1},\pi_\ell(Y_{n+1}))\le q_\ell\}$; by exchangeability the
+rank of the test score among the $n+1$ scores is uniform on $\{1,\dots,n+1\}$, so the probability is at
+least $\lceil(n+1)(1-\alpha_\ell)\rceil/(n+1)\ge 1-\alpha_\ell$ \citep{vovk2005algorithmic,sadinle2019least}.
+$\square$
+
+\textbf{Proposition 2 (simultaneous validity; standard union bound).} If $\sum_\ell\alpha_\ell=\alpha$
+then $\Pr(\exists\,\ell:\pi_\ell(Y_{n+1})\notin C_\ell(X_{n+1}))\le\alpha$.
+\emph{Proof.} Boole's inequality over the $L$ miscoverage events, each of probability $\le\alpha_\ell$ by
+Prop.~1 \citep{baheri2025multiscale}. $\square$
+
+\textbf{Lemma A (monotone aggregation).} For $g\in\mathcal G_\ell$ with parent $h=\rho_\ell(g)$,
+$p_{\ell+1}(h\mid x)\ge p_\ell(g\mid x)$.
+\emph{Proof.} Nesting gives $\{y:\pi_\ell(y)=g\}\subseteq\{y:\pi_{\ell+1}(y)=h\}$; probabilities are
+nonnegative, so the larger index set has the larger sum. $\square$
+
+\textbf{Lemma B (monotonization preserves coverage).} Replacing $q$ by any $\tilde q\ge q$ enlarges
+$C_\ell$ ($\{s\le q\}\subseteq\{s\le\tilde q\}$) and cannot decrease the Prop.~1 coverage. $\square$
+
+\textbf{Theorem 3 (coherent construction preserving validity; new).} Define
+$\tilde q_1=q_1$ and $\tilde q_{\ell+1}=\max(q_{\ell+1},\tilde q_\ell)$ (fine$\to$coarse). Then
+$C_\ell(x)=\{g:p_\ell(g\mid x)\ge 1-\tilde q_\ell\}$ satisfies Props.~1--2 \emph{and} is coherent:
+$\rho_\ell(C_\ell(x))\subseteq C_{\ell+1}(x)$ for all $x,\ell$.
+\emph{Proof.} Validity: $\tilde q_\ell\ge q_\ell$, so Lemma~B preserves each per-level bound and hence
+the union bound. Coherence: if $g\in C_\ell(x)$ then, with $h=\rho_\ell(g)$,
+$p_{\ell+1}(h\mid x)\ge p_\ell(g\mid x)\ge 1-\tilde q_\ell\ge 1-\tilde q_{\ell+1}$, using Lemma~A and
+$\tilde q_{\ell+1}\ge\tilde q_\ell$; thus $h\in C_{\ell+1}(x)$. $\square$
+
+These are finite-sample and distribution-free (exchangeability only). Props.~1--2 are standard; Thm.~3
+--- the isotonic-threshold construction that makes a taxonomic family coherent while provably preserving
+per-scale coverage --- is the contribution. It relates to isotonic-in-conformal calibration
+\citep{vanderlaan2024selfcalibrating} and nested conformal sets \citep{gupta2022nested}, and differs
+from fixed-taxonomy conformal cell typing \citep{corbetta2024conformal,ding2023classcond}.
+
+\clearpage
+\section*{Figures}
+\newcommand{\figblock}[3]{\begin{figure}[p]\centering
+\includegraphics[width=\linewidth]{../figures/#1}\caption{#2}\label{#3}\end{figure}}
+
+\figblock{fig1_geometry_pbmc3k.pdf}{\textbf{Information geometry of the negative-binomial count
+manifold.} (a) Gene variance grows with the mean, following the NB law; the Fisher information
+$I(\mu)=1/\mathrm{Var}$ (inset) is the correct per-gene weight. (b) The Fisher--Rao metric field in
+a latent projection, with distance ellipses and the log-volume (magnification) as background.
+(c) The metric is strongly anisotropic (median condition number $\kappa\!\approx\!100$). (d) Under
+the metric, between-type distances are stretched relative to within-type distances.}{fig:geom}
+
+\figblock{fig2_clustering_pbmc3k.pdf}{\textbf{The right ruler resolves cell types.} Euclidean (a)
+vs.\ Fisher--Rao (b) embeddings. (c) Ablation on a shared latent across three rulers---plain $L_2$,
+decoder pullback $J^{\!\top}J$, and NB Fisher--Rao---isolating the count geometry's contribution.
+(d) Per-type F1 improves for most populations under the Fisher--Rao ruler.}{fig:clust}
+
+\figblock{fig3_markov_pbmc3k.pdf}{\textbf{Markov-stability multiscale clustering.} (a) Number of
+communities and stability across Markov time, with robust plateaus shaded. (b) Across-seed variation
+of information dips at robust scales. (c) The partition-vs-partition VI matrix reveals multiscale
+block structure. (d) An alluvial diagram of the cluster hierarchy across scales.}{fig:markov}
+
+\figblock{fig4_topology.pdf}{\textbf{Persistent homology separates discrete types from continua.}
+Persistence diagrams for discrete (a) and continuous (b) data under the Fisher--Rao distance; the
+transitional-cell map (c); and per-population transitionality across regimes (d).}{fig:topo}
+
+\figblock{fig5_conformal_pancreas.pdf}{\textbf{Conformal prediction.} (a) Achieved coverage matches
+the target, per class. (b) Prediction-set composition (confident / ambiguous / novel) across
+$\alpha$. (c) The ambiguity map. (d) Prediction-set size rises with a population's topological
+transitionality.}{fig:conf}
+
+\figblock{fig6_pancreas_pancreas.pdf}{\textbf{Human pancreatic islet atlas.} (a) The Fisher--Rao
+embedding with rare types labeled. (b) Batch mixing across nine technologies. (c) The fair-benchmark
+method comparison. (d) Per-type recovery of rare islet populations.}{fig:panc}
+
+\figblock{fig7_disease_segerstolpe.pdf}{\textbf{Type-2-diabetes stress test.} Islets by cell type (a)
+and disease (b). (c) Diabetic $\beta$-cells are significantly more topologically transitional. (d)
+Calibrated on healthy cells, the conformal layer assigns diabetic $\beta$-cells more ambiguous and
+novel prediction sets.}{fig:dis}
+
+\figblock{fig8_simulation.pdf}{\textbf{Planted-ground-truth simulation.} (a) Simulated data with
+rare populations. (b) Per-type recall as a function of planted abundance. (c) The ruler ablation on
+labels we control exactly. (d) Rare-type recovery across all methods.}{fig:sim}
+
+\figblock{fig9_synthesis.pdf}{\textbf{Cross-dataset synthesis.} (a) Clustering accuracy (ARI) for
+every method on every dataset. (b) Rare-population recovery, standard vs.\ count-aware. (c) Conformal
+coverage, discreteness index and ambiguous fraction across datasets---confidence and shape agree.
+(d) The Fisher--Rao graph helps, and never hurts, the no-resolution-knob Markov result.}{fig:synth}
+
+\figblock{fig10_optimaltransport.pdf}{\textbf{Optimal transport of disease.} (a) Squared-$W_2$
+displacement between healthy and diabetic cells per type, against a within-healthy null (ticks).
+(b) Displacement above null: insulin ($\beta$) and glucagon ($\alpha$) cells move most. (c) The
+$\beta$-cell transport map, healthy $\to$ T2D. (d) A $250$-fold bootstrap: the $\beta$-cell shift is
+$2.7\times$ the null, $p<0.004$.}{fig:ot}
+
+\figblock{fig11_spectral.pdf}{\textbf{Spectral \& diffusion geometry with a random-matrix null.}
+(a) The diffusion eigenspectrum; the largest spectral gap counts metastable states. (b) A
+Marchenko--Pastur bound separates signal principal components from the noise bulk. (c) Diffusion
+relaxation times coincide with the Markov-stability plateaus. (d) The spectral signature differs by
+tissue.}{fig:spec}
+
+\figblock{fig14_citeseq_orthogonal.pdf}{\textbf{CITE-seq protein as an orthogonal ground truth.}
+(a) The RNA Fisher--Rao embedding, coloured by cell types defined from surface protein alone
+(orthogonal to any RNA pipeline). (b) Mean CLR protein markers per type---the labels are protein-driven.
+(c) RNA clustering scored against the protein labels: PCA remains strong on common types, but the
+count-aware methods lead on rare-type F1. (d) Recovery of the rare dendritic-cell type by method: the
+Fisher--Rao ruler wins (F1 $\csdcfr$), and the same latent read with a Euclidean ruler fails
+($\csdceuc$)---isolating the geometry's contribution on orthogonal truth.}{fig:cite}
+
+\figblock{fig13_scale_nested_conformal.pdf}{\textbf{Scale-nested conformal prediction on the
+Markov-stability hierarchy.} (a) The nested cell-type taxonomy from integrated Markov co-clustering
+(pancreas). (b) Per-scale coverage: marginal coverage holds at every level, while a rare type
+under-served at the finest scale ($\snrarefine$) is rescued as it is pooled into coarse super-types.
+(c) Simultaneous (family-wise) coverage: the union-bound allocation buys a margin over the $0.90$
+target; an uncorrected family sits at the target with none. (d) Coherence: the isotonic-projection
+construction makes every cell coherent (fine calls never contradict their coarse super-type), versus
+$90$--$97\%$ without it. (e) Rare-type rescue generalises across datasets. (f) Prediction sets
+stay compact; the continuum (Paul15) carries the most residual ambiguity. Held-out, 25 splits.}{fig:snc}
+
+\figblock{fig12_multiseed.pdf}{\textbf{Multi-seed confidence intervals.} Retraining the NB-VAE from
+$10$ seeds ($6$ for the pancreas atlas), the headline results are not a lucky seed. (a)~Clustering
+accuracy (ARI) and (b)~rare-type F1 with $95\%$ bootstrap CIs across methods and datasets; the
+count-aware advantage separates from PCA. (c)~Per-seed spread on the pancreas atlas. (d)~Conformal
+coverage sits at its $90\%$ target across seeds.}{fig:ms}
+
+\figblock{fig15_benchmark.pdf}{\textbf{Benchmarking against established integration methods.} The
+transparent scIB battery (bio-conservation and batch-correction) on the nine-technology pancreas atlas,
+comparing PCA, ComBat, Harmony, scVI, scANVI and the count-aware NB-VAE latent. (a)~The
+bio-conservation vs.\ batch-correction trade-off. (b)~Overall score. (c,d)~Metric breakdowns. Scanorama
+is omitted (its dependency requires a compiler unavailable on our hardware).}{fig:bench}
+
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+\end{document}

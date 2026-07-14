@@ -1,0 +1,291 @@
+{
+  "log": {
+    "name": "pbmc3k",
+    "n_cells": 2638,
+    "n_genes": 2000,
+    "n_types": 8,
+    "n_batches": 1
+  },
+  "metrics": {
+    "PCA+Leiden": {
+      "ARI": 0.8596372151548126,
+      "NMI": 0.831411147102299,
+      "AMI": 0.8305267177438053,
+      "homogeneity": 0.804232483388958,
+      "completeness": 0.8604910427317284,
+      "n_clusters": 7,
+      "rare_recall": 0.8220997477512553,
+      "silhouette_Z": 0.12342430651187897,
+      "per_type_f1": {
+        "B cells": 0.986822840409956,
+        "CD14+ Monocytes": 0.9598352214212151,
+        "CD4 T cells": 0.9621811785400176,
+        "CD8 T cells": 0.7067861715749039,
+        "Dendritic cells": 0.631578947368421,
+        "FCGR3A+ Monocytes": 0.9061488673139159,
+        "Megakaryocytes": 0.9285714285714286,
+        "NK cells": 0.0
+      }
+    },
+    "NBVAE+Euclid": {
+      "ARI": 0.48036032376522464,
+      "NMI": 0.7045939099708034,
+      "AMI": 0.7027987126207366,
+      "homogeneity": 0.7900049862844475,
+      "completeness": 0.6358493132175288,
+      "n_clusters": 9,
+      "rare_recall": 0.9012113835275023,
+      "silhouette_Z": 0.10739196091890335,
+      "per_type_f1": {
+        "B cells": 0.9839416058394161,
+        "CD14+ Monocytes": 0.933920704845815,
+        "CD4 T cells": 0.509627727856226,
+        "CD8 T cells": 0.6509186351706037,
+        "Dendritic cells": 0.8641975308641975,
+        "FCGR3A+ Monocytes": 0.8394366197183097,
+        "Megakaryocytes": 1.0,
+        "NK cells": 0.0
+      }
+    },
+    "KMeans": {
+      "ARI": 0.4159036765724759,
+      "NMI": 0.6534302310978634,
+      "AMI": 0.6516008102616967,
+      "homogeneity": 0.7447998465562112,
+      "completeness": 0.5820288326296285,
+      "n_clusters": 8,
+      "rare_recall": 0.2935920196957362,
+      "silhouette_Z": 0.1318059116601944,
+      "per_type_f1": {
+        "B cells": 0.9782923299565847,
+        "CD14+ Monocytes": 0.8826086956521739,
+        "CD4 T cells": 0.45388188453881884,
+        "CD8 T cells": 0.15755627009646303,
+        "Dendritic cells": 0.0,
+        "FCGR3A+ Monocytes": 0.7915567282321899,
+        "Megakaryocytes": 0.08921933085501858,
+        "NK cells": 0.567219152854512
+      }
+    },
+    "IGMC-EucPull": {
+      "ARI": 0.5893598004909367,
+      "NMI": 0.7437564385042925,
+      "AMI": 0.7423267375808561,
+      "homogeneity": 0.7889317418555185,
+      "completeness": 0.7034745311376778,
+      "n_clusters": 8,
+      "rare_recall": 0.8615217378320104,
+      "silhouette_Z": 0.10145363211631775,
+      "per_type_f1": {
+        "B cells": 0.9869375907111755,
+        "CD14+ Monocytes": 0.9512711864406781,
+        "CD4 T cells": 0.6844192634560906,
+        "CD8 T cells": 0.6641025641025641,
+        "Dendritic cells": 0.8641975308641975,
+        "FCGR3A+ Monocytes": 0.8742138364779874,
+        "Megakaryocytes": 0.846153846153846,
+        "NK cells": 0.0
+      }
+    },
+    "IGMC-FR+Leiden": {
+      "ARI": 0.5925567925693869,
+      "NMI": 0.752180825701118,
+      "AMI": 0.7507985510398856,
+      "homogeneity": 0.7987212306433941,
+      "completeness": 0.710765483108774,
+      "n_clusters": 8,
+      "rare_recall": 0.8964836333257385,
+      "silhouette_Z": 0.10661596059799194,
+      "per_type_f1": {
+        "B cells": 0.9898107714701602,
+        "CD14+ Monocytes": 0.9490790899241602,
+        "CD4 T cells": 0.6912339475153546,
+        "CD8 T cells": 0.6683804627249357,
+        "Dendritic cells": 0.935064935064935,
+        "FCGR3A+ Monocytes": 0.8654970760233919,
+        "Megakaryocytes": 0.888888888888889,
+        "NK cells": 0.0
+      }
+    },
+    "IGMC-Markov": {
+      "ARI": 0.8415177038540912,
+      "NMI": 0.8261047022117933,
+      "AMI": 0.8251907566506989,
+      "homogeneity": 0.7995704184503473,
+      "completeness": 0.8544605520893337,
+      "n_clusters": 7,
+      "rare_recall": 0.8769509838716036,
+      "silhouette_Z": 0.11563834547996521,
+      "per_type_f1": {
+        "B cells": 0.9798270893371758,
+        "CD14+ Monocytes": 0.9627263045793397,
+        "CD4 T cells": 0.952215464813206,
+        "CD8 T cells": 0.6710700132100397,
+        "Dendritic cells": 0.860759493670886,
+        "FCGR3A+ Monocytes": 0.9034267912772586,
+        "Megakaryocytes": 0.8666666666666667,
+        "NK cells": 0.0
+      }
+    }
+  },
+  "conformal": {
+    "0.05": {
+      "mean_set_size": 1.150871872630781,
+      "frac_singleton": 0.8415466262319939,
+      "frac_ambiguous": 0.15428354814253223,
+      "frac_novel": 0.004169825625473844,
+      "marginal_coverage": 0.9579226686884003,
+      "per_class_coverage": {
+        "B cells": 0.9619883040935673,
+        "CD14+ Monocytes": 0.9604166666666667,
+        "CD4 T cells": 0.9475524475524476,
+        "CD8 T cells": 0.9683544303797469,
+        "Dendritic cells": 1.0,
+        "FCGR3A+ Monocytes": 0.98,
+        "Megakaryocytes": 1.0,
+        "NK cells": 0.961038961038961
+      }
+    },
+    "0.1": {
+      "mean_set_size": 0.9700530705079605,
+      "frac_singleton": 0.9465504169825626,
+      "frac_ambiguous": 0.011751326762699014,
+      "frac_novel": 0.04169825625473844,
+      "marginal_coverage": 0.9067475360121304,
+      "per_class_coverage": {
+        "B cells": 0.9181286549707602,
+        "CD14+ Monocytes": 0.90625,
+        "CD4 T cells": 0.8968531468531469,
+        "CD8 T cells": 0.8987341772151899,
+        "Dendritic cells": 1.0,
+        "FCGR3A+ Monocytes": 0.9266666666666666,
+        "Megakaryocytes": 1.0,
+        "NK cells": 0.922077922077922
+      }
+    },
+    "0.2": {
+      "mean_set_size": 0.8286580742987112,
+      "frac_singleton": 0.8271417740712661,
+      "frac_ambiguous": 0.000758150113722517,
+      "frac_novel": 0.17210007581501138,
+      "marginal_coverage": 0.8036391205458681,
+      "per_class_coverage": {
+        "B cells": 0.8304093567251462,
+        "CD14+ Monocytes": 0.7895833333333333,
+        "CD4 T cells": 0.7972027972027972,
+        "CD8 T cells": 0.7658227848101266,
+        "Dendritic cells": 0.8648648648648649,
+        "FCGR3A+ Monocytes": 0.86,
+        "Megakaryocytes": 1.0,
+        "NK cells": 0.8246753246753247
+      }
+    }
+  },
+  "topology_global": {
+    "scale": 16.728080780768057,
+    "h0_gap_ratio": 129.63636218412108,
+    "n_significant": 4,
+    "h1_total": 28.62144754394373,
+    "h1_max": 0.14005763951750405,
+    "h1_count": 0,
+    "h0_spread": 0.11373612783715825,
+    "n_points": 1000,
+    "discreteness_index": 0.8388931008339651
+  },
+  "topology_continuity_index": 0.16110689916603488,
+  "topology_per_cluster_truth": {
+    "B cells": {
+      "transitional_frac": 0.02046783625730994,
+      "mean_purity": 0.9673489278752437,
+      "n": 342
+    },
+    "CD14+ Monocytes": {
+      "transitional_frac": 0.0375,
+      "mean_purity": 0.9565972222222224,
+      "n": 480
+    },
+    "CD4 T cells": {
+      "transitional_frac": 0.050699300699300696,
+      "mean_purity": 0.9310314685314687,
+      "n": 1144
+    },
+    "CD8 T cells": {
+      "transitional_frac": 0.5886075949367089,
+      "mean_purity": 0.5736286919831224,
+      "n": 316
+    },
+    "Dendritic cells": {
+      "transitional_frac": 0.7297297297297297,
+      "mean_purity": 0.536936936936937,
+      "n": 37
+    },
+    "FCGR3A+ Monocytes": {
+      "transitional_frac": 0.42,
+      "mean_purity": 0.6793333333333333,
+      "n": 150
+    },
+    "Megakaryocytes": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.28,
+      "n": 15
+    },
+    "NK cells": {
+      "transitional_frac": 0.33116883116883117,
+      "mean_purity": 0.7521645021645023,
+      "n": 154
+    }
+  },
+  "topology_per_cluster_infer": {
+    "0": {
+      "transitional_frac": 0.366306027820711,
+      "mean_purity": 0.7411643482740855,
+      "n": 647
+    },
+    "1": {
+      "transitional_frac": 0.352112676056338,
+      "mean_purity": 0.7470154258886653,
+      "n": 497
+    },
+    "2": {
+      "transitional_frac": 0.18614718614718614,
+      "mean_purity": 0.8511544011544012,
+      "n": 462
+    },
+    "3": {
+      "transitional_frac": 0.022573363431151242,
+      "mean_purity": 0.945221971407073,
+      "n": 443
+    },
+    "4": {
+      "transitional_frac": 0.017391304347826087,
+      "mean_purity": 0.9755555555555557,
+      "n": 345
+    },
+    "5": {
+      "transitional_frac": 0.3177083333333333,
+      "mean_purity": 0.7595486111111112,
+      "n": 192
+    },
+    "6": {
+      "transitional_frac": 0.625,
+      "mean_purity": 0.5983333333333334,
+      "n": 40
+    },
+    "7": {
+      "transitional_frac": 1.0,
+      "mean_purity": 0.33055555555555555,
+      "n": 12
+    }
+  },
+  "markov_robust_times": [
+    20.271997861436663,
+    27.194605220720867,
+    36.48118740766514,
+    48.93900918477494,
+    65.65100508445242,
+    88.0699168290409,
+    118.14457737998951,
+    158.48931924611142
+  ],
+  "runtime_sec": 73.15905737876892
+}

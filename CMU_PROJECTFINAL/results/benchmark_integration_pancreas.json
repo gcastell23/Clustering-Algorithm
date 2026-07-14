@@ -1,0 +1,99 @@
+{
+  "dataset": "pancreas",
+  "n_cells": 16382,
+  "n_batches": 9,
+  "n_types": 14,
+  "timing_sec": {
+    "PCA": 1.3125321865081787,
+    "ComBat": 12.489815950393677,
+    "Harmony": 28.87234592437744,
+    "scVI": 1403.9403953552246,
+    "scANVI": 1700.7542822360992
+  },
+  "methods": {
+    "PCA": {
+      "bio/NMI": 0.6937503175282917,
+      "bio/ARI": 0.4899641001029349,
+      "bio/ASW_celltype": 0.5769752874133968,
+      "bio/isolated_label_F1": 0.014796547472256474,
+      "bio/cLISI": 1.0,
+      "batch/ASW_batch": 0.7990580177185639,
+      "batch/graph_connectivity": 0.8943380227692905,
+      "batch/iLISI": 0.035663281497937155,
+      "bio_conservation": 0.555097250503376,
+      "batch_correction": 0.5763531073285971,
+      "overall": 0.5635995932334644,
+      "score_sec": 30.278797149658203
+    },
+    "ComBat": {
+      "bio/NMI": 0.8795547768155488,
+      "bio/ARI": 0.9271162827442367,
+      "bio/ASW_celltype": 0.6273082384905907,
+      "bio/isolated_label_F1": 0.026905829596412554,
+      "bio/cLISI": 1.0,
+      "batch/ASW_batch": 0.8218698362275174,
+      "batch/graph_connectivity": 0.9511506827762067,
+      "batch/iLISI": 0.18558282208588955,
+      "bio_conservation": 0.6921770255293578,
+      "batch_correction": 0.6528677803632046,
+      "overall": 0.6764533274628965,
+      "score_sec": 30.19605040550232
+    },
+    "Harmony": {
+      "bio/NMI": 0.862697235444003,
+      "bio/ARI": 0.905630450569828,
+      "bio/ASW_celltype": 0.6708375167354523,
+      "bio/isolated_label_F1": 0.024291497975708506,
+      "bio/cLISI": 1.0,
+      "batch/ASW_batch": 0.8412468728680247,
+      "batch/graph_connectivity": 0.933289473475107,
+      "batch/iLISI": 0.528225806451613,
+      "bio_conservation": 0.6926913401449983,
+      "batch_correction": 0.7675873842649149,
+      "overall": 0.7226497577929649,
+      "score_sec": 30.69797444343567
+    },
+    "scVI": {
+      "bio/NMI": 0.9146762274261784,
+      "bio/ARI": 0.948745030363673,
+      "bio/ASW_celltype": 0.6193064283331119,
+      "bio/isolated_label_F1": 0.09790209790209789,
+      "bio/cLISI": 1.0,
+      "batch/ASW_batch": 0.8658100816736712,
+      "batch/graph_connectivity": 0.9887790644165635,
+      "batch/iLISI": 0.22462016574585636,
+      "bio_conservation": 0.7161259568050122,
+      "batch_correction": 0.6930697706120305,
+      "overall": 0.7069034823278195,
+      "score_sec": 37.39106369018555
+    },
+    "scANVI": {
+      "bio/NMI": 0.9664703671659916,
+      "bio/ARI": 0.9860088478527707,
+      "bio/ASW_celltype": 0.6763805804780865,
+      "bio/isolated_label_F1": 0.09859154929577466,
+      "bio/cLISI": 1.0,
+      "batch/ASW_batch": 0.8673229327124923,
+      "batch/graph_connectivity": 0.9975575479148132,
+      "batch/iLISI": 0.27742448330683617,
+      "bio_conservation": 0.7454902689585247,
+      "batch_correction": 0.7141016546447139,
+      "overall": 0.7329348232330004,
+      "score_sec": 35.44574546813965
+    },
+    "IGMC (NB-VAE latent)": {
+      "bio/NMI": 0.9026889597363613,
+      "bio/ARI": 0.9380916964318686,
+      "bio/ASW_celltype": 0.6044830118658536,
+      "bio/isolated_label_F1": 0.0025787437833855223,
+      "bio/cLISI": 1.0,
+      "batch/ASW_batch": 0.8760944378122869,
+      "batch/graph_connectivity": 0.9866607679737631,
+      "batch/iLISI": 0.4062172088142708,
+      "bio_conservation": 0.6895684823634939,
+      "batch_correction": 0.756324138200107,
+      "overall": 0.7162707446981391,
+      "score_sec": 45.858882188797
+    }
+  }
+}
