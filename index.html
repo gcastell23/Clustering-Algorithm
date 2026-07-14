@@ -12,6 +12,8 @@
     </style>
 </head>
 <body class="gradient-bg text-slate-100 font-sans min-h-screen pb-12">
+
+    <!-- Hero Header -->
     <header class="border-b border-slate-800 py-6 px-8 mb-8">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
@@ -26,63 +28,134 @@
         </div>
     </header>
 
+    <!-- Content Workspace -->
     <main class="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Column 1: PART 1 - Biological & Computational Review (Topic Background) -->
         <div class="lg:col-span-1 flex flex-col gap-6">
-            <h2 class="text-xl font-bold text-cyan-400 flex items-center gap-2">🚀 Project Pillars</h2>
-            <div class="glass-card p-5 rounded-2xl">
-                <h3 class="text-md font-bold text-indigo-300">1. The Smart Ruler 📏</h3>
-                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Replaces straight-line grid systems with a dynamic geometric metric. Bends around noise to amplify rare biological signals.</p>
+            
+            <!-- Section: Foundational History -->
+            <div class="glass-card p-6 rounded-2xl border-l-4 border-indigo-500">
+                <h2 class="text-lg font-bold text-indigo-400 mb-2">📜 Topic Review & History</h2>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    In the past, scientists had to analyze tissue samples in bulk, which averaged out the unique characteristics of different cells[cite: 2]. This changed with the breakthrough work by <strong>Macosko et al. (2015)</strong>[cite: 1, 2].
+                </p>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    By inventing a microfluidic technology (Drop-seq) to isolate thousands of individual cells in nanoliter-sized droplets, they could measure the exact mRNA fingerprint of individual cells[cite: 2]. This launched the modern era of single-cell biology, allowing us to build complete cellular maps of our tissues[cite: 2].
+                </p>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
-                <h3 class="text-md font-bold text-indigo-300">2. The Ink-Drop Test 💧</h3>
-                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Employs random walks to find stable biological communities, eliminating arbitrary clustering knobs.</p>
+
+            <!-- Section: The Integration Challenge (FIRM) -->
+            <div class="glass-card p-6 rounded-2xl">
+                <h2 class="text-md font-bold text-amber-400 mb-2">⚙️ The Integration Problem (FIRM)</h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Because datasets are collected by different labs using different technologies (like SMART-Seq2 vs. 10X), technical differences can introduce noise and cause cells to cluster by platform instead of biological type[cite: 1, 2]. 
+                </p>
+                <p class="text-xs text-slate-300 leading-relaxed mt-2">
+                    Methods like <strong>FIRM (Ming et al., 2022)</strong> correct these platform variations to ensure cells align based on true biology, preserving subtle biological details without overcorrecting the data[cite: 1, 2].
+                </p>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
-                <h3 class="text-md font-bold text-indigo-300">3. Islands vs. Highways 🛣️</h3>
-                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Finds whether clusters represent isolated cell classes (islands) or transitioning pathways (highways).</p>
-            </div>
-            <div class="glass-card p-5 rounded-2xl">
-                <h3 class="text-md font-bold text-indigo-300">4. Calibrated Forecasts 🌤️</h3>
-                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Outputs highly calibrated statistical ranges giving clear confidence maps over predictions.</p>
+
+            <!-- Section: Biological Significance -->
+            <div class="glass-card p-6 rounded-2xl">
+                <h2 class="text-lg font-bold text-cyan-400 mb-2">🎯 Our Aim & Clinical Importance</h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    In conditions like HNF1A-driven monogenic diabetes, genetic mutations do not simply wipe out cell types; they slowly push cells into unstable, transitioning intermediate states[cite: 1]. 
+                </p>
+                <p class="text-xs text-slate-300 leading-relaxed mt-2">
+                    Standard distance measures miss these transitions because they force cells into neat, simplified clusters[cite: 1, 2]. By replacing traditional rulers with a noise-aware algorithm, we can trace exactly how these cells drift on their path toward disease[cite: 1].
+                </p>
             </div>
         </div>
 
+        <!-- Column 2 & 3: PART 2 - Algorithm, Benchmarks, & Comparative Advantages -->
         <div class="lg:col-span-2 flex flex-col gap-6">
-            <h2 class="text-xl font-bold text-cyan-400">📊 Live Performance Metrics</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="glass-card p-4 rounded-xl text-center">
-                    <span class="block text-2xl font-black text-emerald-400">200x</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Rare Type Recovery</span>
+            
+            <!-- Comparison Grid: Why we are better than before -->
+            <div class="glass-card p-6 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h2 class="text-md font-bold text-red-400 mb-2">❌ Standard PCA + Leiden</h2>
+                    <ul class="list-disc list-inside text-xs text-slate-400 space-y-2">
+                        <li>Uses straight-line Euclidean distance, ignoring natural transcript variance[cite: 1, 2].</li>
+                        <li>Requires manual tuning of an arbitrary "resolution knob" to find clusters[cite: 1].</li>
+                        <li>Fails to resolve rare populations, absorbing them into larger groups[cite: 1].</li>
+                        <li>Forces labels on cells, failing to flag ambiguous transitioning phenotypes[cite: 1].</li>
+                    </ul>
                 </div>
-                <div class="glass-card p-4 rounded-xl text-center">
-                    <span class="block text-2xl font-black text-cyan-400">0.906</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Stability Score (ARI)</span>
-                </div>
-                <div class="glass-card p-4 rounded-xl text-center">
-                    <span class="block text-2xl font-black text-purple-400">92.2%</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Conformal Coverage</span>
-                </div>
-                <div class="glass-card p-4 rounded-xl text-center">
-                    <span class="block text-2xl font-black text-amber-400">2.7x</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Beta Cell Displacement</span>
+                <div class="border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+                    <h2 class="text-md font-bold text-emerald-400 mb-2">✅ Our IGMC Framework</h2>
+                    <ul class="list-disc list-inside text-xs text-slate-300 space-y-2">
+                        <li><strong>Smart Ruler:</strong> Scales mathematical distances to prioritize low-expression signals[cite: 1].</li>
+                        <li><strong>Ink-Drop Walks:</strong> Finds stable biological communities naturally[cite: 1].</li>
+                        <li><strong>Islands vs. Highways:</strong> Math-based validation of discrete types vs. continuums[cite: 1].</li>
+                        <li><strong>Conformal Sets:</strong> Clear and honest confidence boundaries on every single cell label[cite: 1].</li>
+                    </ul>
                 </div>
             </div>
 
-            <div class="glass-card p-6 rounded-3xl flex-1 flex flex-col justify-between min-h-[350px]">
-                <div>
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-sm tracking-wide text-slate-300">Method Comparison vs. Standard Pipelines</h3>
-                        <span class="text-[11px] px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded-md border border-indigo-500/30 font-mono">Pancreas Dataset Baseline</span>
+            <!-- Live Metric Dashboards -->
+            <div>
+                <h2 class="text-xl font-bold text-cyan-400 mb-4">📊 Live Results (Pancreas Islet Atlas)</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="glass-card p-4 rounded-xl text-center">
+                        <span class="block text-2xl font-black text-emerald-400">200x</span>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Rare Type Recovery</span>
                     </div>
-                    <p class="text-xs text-slate-400 mb-6">Our pipeline (IGMC) successfully identifies rare diabetes indicator populations that standard frameworks flatten and miss entirely.</p>
+                    <div class="glass-card p-4 rounded-xl text-center">
+                        <span class="block text-2xl font-black text-cyan-400">0.906</span>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Stability Score (ARI)</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl text-center">
+                        <span class="block text-2xl font-black text-purple-400">92.2%</span>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Conformal Coverage</span>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl text-center">
+                        <span class="block text-2xl font-black text-amber-400">2.7x</span>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold">Beta Cell Displacement</span>
+                    </div>
                 </div>
-                <div class="relative w-full aspect-video md:aspect-[2/1]">
-                    <canvas id="performanceChart"></canvas>
+
+                <!-- Interactive Chart Panel -->
+                <div class="glass-card p-6 rounded-3xl min-h-[350px] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-sm tracking-wide text-slate-300">Method Comparison: Recovery Accuracy</h3>
+                            <span class="text-[11px] px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded-md border border-indigo-500/30 font-mono">Benchmark Metrics</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-6">Our framework successfully isolates rare diabetes-indicating cell structures that traditional PCA models lose to technical noise[cite: 1].</p>
+                    </div>
+                    <div class="relative w-full aspect-video md:aspect-[2.5/1]">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Walkthrough: Mechanics of the Algorithm -->
+            <div class="glass-card p-6 rounded-2xl">
+                <h2 class="text-lg font-bold text-cyan-400 mb-3">🛠️ Inside the Algorithm</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
+                    <div class="p-3 bg-white/5 rounded-xl">
+                        <strong class="text-indigo-300">1. Information-Geometric Metric</strong>
+                        <p class="mt-1 text-slate-400">Uses Negative Binomial modeling properties to ensure that quiet, low-count transcripts are evaluated with higher sensitivity than noisy high-count ones[cite: 1].</p>
+                    </div>
+                    <div class="p-3 bg-white/5 rounded-xl">
+                        <strong class="text-indigo-300">2. Markov Stability Community Search</strong>
+                        <p class="mt-1 text-slate-400">Drips mathematical "ink" on the cell network and monitors where fluid is held across various walk times to identify natural cell type groups[cite: 1].</p>
+                    </div>
+                    <div class="p-3 bg-white/5 rounded-xl">
+                        <strong class="text-indigo-300">3. Topological Shape Test</strong>
+                        <p class="mt-1 text-slate-400">Analyzes the spatial patterns of cell communities to determine if they form isolated islands (distinct types) or pathways (transition lines)[cite: 1].</p>
+                    </div>
+                    <div class="p-3 bg-white/5 rounded-xl">
+                        <strong class="text-indigo-300">4. Split-Conformal Prediction</strong>
+                        <p class="mt-1 text-slate-400">Replaces simple, single-label guesses with robust confidence boundaries, letting the model report when a cell is transitioning or highly ambiguous[cite: 1].</p>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Chart Configuration Script -->
     <script>
         const ctx = document.getElementById('performanceChart').getContext('2d');
         new Chart(ctx, {
