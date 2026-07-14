@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGMC Project Showcase</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="gradient-bg text-slate-100 font-sans min-h-screen pb-12">
+    <header class="border-b border-slate-800 py-6 px-8 mb-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">IGMC</h1>
+                <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">Information-Geometric Multiscale Clustering</p>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-slate-300 glass-card px-4 py-2 rounded-full">
+                <span class="font-medium">🔬 CMU Pre-College Comp Bio</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-cyan-400 font-semibold">Team: Gabriella, Megan, Emma, Rajarshi</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 flex flex-col gap-6">
+            <h2 class="text-xl font-bold text-cyan-400 flex items-center gap-2">🚀 Project Pillars</h2>
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-md font-bold text-indigo-300">1. The Smart Ruler 📏</h3>
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Replaces straight-line grid systems with a dynamic geometric metric. Bends around noise to amplify rare biological signals.</p>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-md font-bold text-indigo-300">2. The Ink-Drop Test 💧</h3>
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Employs random walks to find stable biological communities, eliminating arbitrary clustering knobs.</p>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-md font-bold text-indigo-300">3. Islands vs. Highways 🛣️</h3>
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Finds whether clusters represent isolated cell classes (islands) or transitioning pathways (highways).</p>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <h3 class="text-md font-bold text-indigo-300">4. Calibrated Forecasts 🌤️</h3>
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">Outputs highly calibrated statistical ranges giving clear confidence maps over predictions.</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            <h2 class="text-xl font-bold text-cyan-400">📊 Live Performance Metrics</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-xl text-center">
+                    <span class="block text-2xl font-black text-emerald-400">200x</span>
+                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Rare Type Recovery</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl text-center">
+                    <span class="block text-2xl font-black text-cyan-400">0.906</span>
+                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Stability Score (ARI)</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl text-center">
+                    <span class="block text-2xl font-black text-purple-400">92.2%</span>
+                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Conformal Coverage</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl text-center">
+                    <span class="block text-2xl font-black text-amber-400">2.7x</span>
+                    <span class="text-[10px] text-slate-400 uppercase font-semibold">Beta Cell Displacement</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl flex-1 flex flex-col justify-between min-h-[350px]">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-sm tracking-wide text-slate-300">Method Comparison vs. Standard Pipelines</h3>
+                        <span class="text-[11px] px-2 py-0.5 bg-indigo-500/20 text-indigo-400 rounded-md border border-indigo-500/30 font-mono">Pancreas Dataset Baseline</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-6">Our pipeline (IGMC) successfully identifies rare diabetes indicator populations that standard frameworks flatten and miss entirely.</p>
+                </div>
+                <div class="relative w-full aspect-video md:aspect-[2/1]">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Rare Cell F1 Score', 'Clustering Accuracy (ARI)', 'Target Coverage Confidence'],
+                datasets: [
+                    {
+                        label: 'Our IGMC Model',
+                        data: [0.48, 0.906, 0.922],
+                        backgroundColor: 'rgba(34, 211, 238, 0.75)',
+                        borderColor: 'rgb(34, 211, 238)',
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Standard Pipeline (PCA + Leiden)',
+                        data: [0.002, 0.472, 0.510],
+                        backgroundColor: 'rgba(99, 102, 241, 0.4)',
+                        borderColor: 'rgb(99, 102, 241)',
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+                },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' }, beginAtZero: true },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
