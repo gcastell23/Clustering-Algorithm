@@ -3,306 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGMC | Information-Geometric Multiscale Clustering</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>IGMC-Lite Project Presentation</title>
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #090d16 0%, #0f1026 50%, #170f2c 100%); }
-        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.06); }
-        .glass-card-accent { background: rgba(34, 211, 238, 0.03); backdrop-filter: blur(16px); border: 1px solid rgba(34, 211, 238, 0.15); }
-        .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
-        .tab-btn.active { border-color: rgb(34, 211, 238); color: rgb(34, 211, 238); background-color: rgba(34, 211, 238, 0.05); }
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-color: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success-color: #10b981;
+            --border-color: #334155;
+            --font-size-base: 18px; /* Elevated for optimal readability */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        /* 🗂️ Nav Tabs Styles */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-color);
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+            border-bottom: 3px solid var(--accent-color);
+            background-color: rgba(56, 189, 248, 0.05);
+        }
+
+        /* 📄 Content Sections */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🎛️ Card Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h2 {
+            color: var(--accent-color);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .card h3 {
+            color: var(--text-color);
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-left: 0.5rem;
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -0.2rem;
+        }
+
+        /* 📊 Interactive Results Panel */
+        .dashboard-container {
+            text-align: center;
+        }
+
+        .dashboard-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            margin: 1rem 0;
+            background-color: #fff; /* fallback standard background */
+        }
+
+        .metrics-summary {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #34d399;
+        }
+
+        .code-block {
+            background-color: #090d16;
+            color: #38bdf8;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
     </style>
 </head>
-<body class="gradient-bg text-slate-100 font-sans min-h-screen pb-16 selection:bg-cyan-500 selection:text-slate-900">
+<body>
 
-    <!-- Sticky Sleek Navbar -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/70 border-b border-slate-800/80 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <h1 class="text-2xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400 bg-clip-text text-transparent">IGMC</h1>
-                </div>
-                <p class="text-[10px] text-slate-400 mt-0.5 uppercase tracking-widest font-semibold">Information-Geometric Multiscale Clustering</p>
-            </div>
-            <div class="flex items-center gap-3 text-xs text-slate-300 glass-card px-4 py-2 rounded-full">
-                <span class="font-bold tracking-wider text-slate-400">🔬 CMU COMP BIO PRE-COLLEGE</span>
-                <span class="text-slate-700">|</span>
-                <span class="text-cyan-400 font-semibold">Gabriella, Megan, Emma, Rajarshi</span>
-            </div>
-        </div>
+<div class="container">
+    <header>
+        <h1>IGMC-Lite Pipeline</h1>
+        <p>Uncertainty-Aware Shared Nearest Neighbor (SNN) Single-Cell Clustering</p>
     </header>
 
-    <!-- Tabbed Navigation -->
-    <nav class="max-w-7xl mx-auto px-6 mt-8">
-        <div class="flex flex-wrap gap-1 bg-slate-950/40 p-1.5 rounded-xl border border-slate-800/50">
-            <button onclick="switchTab('tab-home')" id="btn-tab-home" class="tab-btn active px-5 py-2.5 text-xs uppercase tracking-wider font-bold rounded-lg hover:text-cyan-300">
-                🏠 Executive Summary
-            </button>
-            <button onclick="switchTab('tab-review')" id="btn-tab-review" class="tab-btn px-5 py-2.5 text-xs uppercase tracking-wider font-bold rounded-lg hover:text-cyan-300">
-                📚 Science & History
-            </button>
-            <button onclick="switchTab('tab-debugging')" id="btn-tab-debugging" class="tab-btn px-5 py-2.5 text-xs uppercase tracking-wider font-bold rounded-lg hover:text-cyan-300">
-                ⚡ The Engineering Pivot
-            </button>
-            <button onclick="switchTab('tab-results')" id="btn-tab-results" class="tab-btn px-5 py-2.5 text-xs uppercase tracking-wider font-bold rounded-lg hover:text-cyan-300">
-                📊 Comparative Analysis
-            </button>
-            <button onclick="switchTab('tab-code')" id="btn-tab-code" class="tab-btn px-5 py-2.5 text-xs uppercase tracking-wider font-bold rounded-lg hover:text-cyan-300">
-                💻 Run Environment
-            </button>
-        </div>
-    </nav>
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('evolution')">Project Evolution</button>
+        <button class="tab-btn" onclick="switchTab('architecture')">Four Pillars</button>
+        <button class="tab-btn" onclick="switchTab('results')">Interactive Results</button>
+    </div>
 
-    <!-- Main Content Panels -->
-    <main class="max-w-7xl mx-auto px-6 mt-8">
-        
-        <!-- TAB 1: EXECUTIVE SUMMARY -->
-        <div id="tab-home" class="tab-content grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 flex flex-col gap-6">
-                <div class="glass-card p-8 rounded-3xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl"></div>
-                    <span class="text-[10px] bg-cyan-400/10 text-cyan-400 border border-cyan-400/20 px-2.5 py-1 rounded-full font-mono uppercase tracking-widest">Project Aim</span>
-                    <h2 class="text-3xl font-extrabold text-white mt-4 mb-4">Tracking Cellular Identity Transitions</h2>
-                    <p class="text-slate-300 leading-relaxed text-sm mb-4">
-                        A fundamental rule of biology is that distinct cell types exist in stable, specialized communities[cite: 2]. However, complex genetic diseases, such as <strong>HNF1A-driven monogenic diabetes</strong>, challenge this model[cite: 1]. Mutations do not instantly kill islet cells; instead, they slowly alter their genetic activity, pushing healthy cells into unstable, transitioning phenotypes[cite: 1].
-                    </p>
-                    <p class="text-slate-300 leading-relaxed text-sm mb-4">
-                        Traditional clustering methods (such as PCA followed by Leiden or K-Means) use a flat Euclidean ruler, drawing rigid, geometric partitions[cite: 1, 2]. This flattens important biological variation and mislabels cells that fall along transition zones[cite: 1].
-                    </p>
-                    <p class="text-slate-300 leading-relaxed text-sm font-semibold text-cyan-300">
-                        Our Solution: We built a noise-aware Information-Geometric framework designed to calculate transcriptomic distance based on expression variance rather than raw physical distance, allowing us to accurately track cell states dynamically[cite: 1].
-                    </p>
-                </div>
+    <!-- TAB 1: EVOLUTION -->
+    <div id="evolution" class="tab-content active">
+        <div class="grid-2">
+            <div class="card">
+                <h2>⚠️ Where We Started</h2>
+                <p>Initially, our inductive pipeline suffered from scale distortion and structural limitations:</p>
+                <ul>
+                    <li><strong>Metric Distortion:</strong> Artificial feature scaling blew up Euclidean spatial coordinates, distorting true clustering boundaries.</li>
+                    <li><strong>The Uncertainty Flood:</strong> A poorly calibrated validation split and low alpha boundary criteria caused the conformal prediction model to flag almost all cells (700+) as transitioning.</li>
+                    <li><strong>Data Pipeline Crashes:</strong> Biological gene filters crashed the program when synthetic control datasets with few variables were processed.</li>
+                </ul>
             </div>
-            
-            <div class="lg:col-span-1 flex flex-col gap-6">
-                <div class="glass-card p-6 rounded-2xl border-t-2 border-indigo-500">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-indigo-400 mb-2">Clinical Context</h3>
-                    <p class="text-xs text-slate-400 leading-relaxed mb-3">
-                        HNF1A-MODY serves as our primary test case. Because mutated beta cells gradually lose their identity rather than forming a distinct separate group, standard models struggle to resolve their location[cite: 1].
-                    </p>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        By deploying our mathematical model, we can trace this transition state as a continuous trajectory, rather than forcing cells into clean but incorrect classifications[cite: 1].
-                    </p>
-                </div>
-                <div class="glass-card-accent p-6 rounded-2xl">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-cyan-400 mb-2">Algorithmic Innovation</h3>
-                    <ul class="space-y-2 text-xs text-slate-300">
-                        <li class="flex items-center gap-2">🟢 <strong class="text-slate-100">Smart Ruler:</strong> Overcomes expression noise[cite: 1].</li>
-                        <li class="flex items-center gap-2">🟢 <strong class="text-slate-100">Spectral Graphing:</strong> Captures global topologies[cite: 1].</li>
-                        <li class="flex items-center gap-2">🟢 <strong class="text-slate-100">Conformal Sets:</strong> Quantifies cell label doubt[cite: 1].</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: SCIENCE & HISTORY -->
-        <div id="tab-review" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="glass-card p-6 rounded-2xl border-t-2 border-cyan-400">
-                <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-wider">Historical Breakthrough</span>
-                <h3 class="text-lg font-bold text-white mt-1 mb-3">Macosko et al. (2015)</h3>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    Prior to droplet-based sequencing, researchers were forced to run bulk tissue arrays, averaging out expression profiles over thousands of combined cells[cite: 2]. By encapsulating single cells into oil droplets, Macosko and their team made it possible to read unique, individual cell transcriptomes[cite: 2]. This development established the foundation for mapping high-resolution cellular atlases[cite: 2].
-                </p>
-            </div>
-            
-            <div class="glass-card p-6 rounded-2xl border-t-2 border-indigo-400">
-                <span class="text-[10px] font-mono text-indigo-400 uppercase tracking-wider">Technical Challenges</span>
-                <h3 class="text-lg font-bold text-white mt-1 mb-3">FIRM Integration (2022)</h3>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    Combining multi-center datasets introduces systematic experimental noise (batch effects) where cells mistakenly group by lab platform rather than biological type[cite: 1, 2]. As studied by Ming et al. (2022) with FIRM, aligning cell types across different platforms requires careful normalization to maintain underlying biological structures[cite: 1, 2].
-                </p>
-            </div>
-
-            <div class="glass-card p-6 rounded-2xl border-t-2 border-teal-400">
-                <span class="text-[10px] font-mono text-teal-400 uppercase tracking-wider">Applied Datasets</span>
-                <h3 class="text-lg font-bold text-white mt-1 mb-3">Evaluated Profiles</h3>
-                <ul class="space-y-3 text-xs text-slate-300">
-                    <li>
-                        <strong class="text-teal-300 block">10X PBMC 3k:</strong> 
-                        A baseline dataset of 2,638 immune cells used for model tuning and verification[cite: 1].
-                    </li>
-                    <li>
-                        <strong class="text-teal-300 block">Islet Reference Atlas:</strong> 
-                        Pancreatic references (Baron, Muraro, Segerstolpe) used to baseline healthy cell type profiles[cite: 1].
-                    </li>
+            <div class="card">
+                <h2>🚀 How It Evolved</h2>
+                <p>We solved these critical bottlenecks by introducing clean biological and mathematical standards:</p>
+                <ul>
+                    <li><strong>Dynamic Filtering:</strong> Developed dedicated biological preprocessing modules that automatically identify synthetic control data from complex scRNA-seq matrices.</li>
+                    <li><strong>Local Graph Tuning:</strong> Shifted from absolute spatial distance calculations to relative graph connectivity frameworks.</li>
+                    <li><strong>Calibrated Conformal sets:</strong> Tuned statistical tolerances to 85% confidence boundaries to cleanly highlight cell boundaries.</li>
                 </ul>
             </div>
         </div>
+    </div>
 
-        <!-- TAB 3: THE ENGINEERING PIVOT (DEBUGGING PROCESS) -->
-        <div id="tab-debugging" class="tab-content hidden flex flex-col gap-8">
-            <div class="glass-card p-8 rounded-3xl border-l-4 border-amber-500 relative">
-                <span class="text-[10px] bg-amber-400/10 text-amber-400 border border-amber-400/20 px-2.5 py-1 rounded-full font-mono uppercase tracking-widest">Engineering Diary</span>
-                <h2 class="text-2xl font-black text-white mt-4 mb-2">How We Diagnosed and Fixed a Broken Algorithm</h2>
-                <p class="text-slate-300 text-sm leading-relaxed mb-6">
-                    In our initial implementation of the IGMC pipeline, we observed a catastrophic failure: our model scored an Adjusted Rand Index (ARI) of just <strong>0.076</strong>. It was practically performing random classification and was easily beaten by the standard baseline pipeline.
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                    <div class="p-5 bg-red-950/20 rounded-xl border border-red-500/20">
-                        <h4 class="text-xs font-bold uppercase text-red-400 tracking-wider mb-2">❌ The Bug: Naive Transition Matrix Argmax</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed mb-3">
-                            Our original clustering logic mapped random walk probabilities onto a transition matrix $P_t$, then ran:
-                        </p>
-                        <code class="block bg-slate-950 p-2 rounded text-[11px] font-mono text-red-300 mb-3">predicted_clusters = np.argmax(P_t, axis=1)</code>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            <strong>Why it failed:</strong> Identifying clusters using a local, cell-by-cell maximum index created thousands of tiny, disjointed micro-clusters[cite: 1]. It lacked global network awareness, ruining our ARI and failing to group matching cells together.
-                        </p>
-                    </div>
-
-                    <div class="p-5 bg-emerald-950/20 rounded-xl border border-emerald-500/20">
-                        <h4 class="text-xs font-bold uppercase text-emerald-400 tracking-wider mb-2">✅ The Fix: Spectral Graph Partitioning</h4>
-                        <p class="text-xs text-slate-400 leading-relaxed mb-3">
-                            We pivoted our approach. Instead of calculating a local maximum, we applied <strong>Spectral Clustering</strong> directly to our Information-Geometric Similarity Matrix ($W$)[cite: 1]:
-                        </p>
-                        <code class="block bg-slate-950 p-2 rounded text-[11px] font-mono text-emerald-300 mb-3">spectral = SpectralClustering(affinity='precomputed')</code>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            <strong>Why it succeeded:</strong> Spectral clustering treats the cell network as a global graph, analyzing its eigenvalues to partition the data cleanly along true biological boundaries[cite: 1]. This structural correction immediately restored the model's performance.
-                        </p>
-                    </div>
+    <!-- TAB 2: ARCHITECTURE -->
+    <div id="architecture" class="tab-content">
+        <div class="card">
+            <h2>🛠️ The Four Pillars of IGMC-Lite</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>1. Density-Balanced SNN Graph</h3>
+                    <p>Instead of mapping flat spatial coordinates, we construct a <strong>Shared Nearest Neighbor (SNN)</strong> graph. Cells are mapped based on their shared neighbor intersections, which dynamically handles differing cell density profiles.</p>
+                </div>
+                <div>
+                    <h3>2. Normalized Spectral Manifold</h3>
+                    <p>We perform precomputed Spectral Partitioning on the SNN affinity graph. This handles complex, non-spherical biological manifolds that linear pipelines like K-Means miss.</p>
+                </div>
+                <div>
+                    <h3>3. Calibrated Split-Conformal Sets</h3>
+                    <p>By calibrating prediction non-conformity tolerances ($\alpha = 0.15$), we isolate cells that span multiple classes. This flags transitioning states selectively without visual noise.</p>
+                </div>
+                <div>
+                    <h3>4. Dual-Metric Verification</h3>
+                    <p>We monitor performance using the <strong>Adjusted Rand Index (ARI)</strong> for global partition quality and the <strong>Rare-Cell F1 Score</strong> to track how well we discover small cellular states.</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- TAB 4: COMPARATIVE ANALYSIS -->
-        <div id="tab-results" class="tab-content hidden flex flex-col gap-8">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-                <div class="glass-card p-5 rounded-xl text-center">
-                    <span class="block text-3xl font-black text-emerald-400">~0.825</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Corrected ARI Score</span>
-                </div>
-                <div class="glass-card p-5 rounded-xl text-center">
-                    <span class="block text-3xl font-black text-cyan-400">0.781</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Rare Cell F1 Score</span>
-                </div>
-                <div class="glass-card p-5 rounded-xl text-center">
-                    <span class="block text-3xl font-black text-purple-400">92.2%</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Calibration Coverage</span>
-                </div>
-                <div class="glass-card p-5 rounded-xl text-center">
-                    <span class="block text-3xl font-black text-amber-500">2.7x</span>
-                    <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Beta Cell Resolution</span>
-                </div>
+    <!-- TAB 3: RESULTS -->
+    <div id="results" class="tab-content">
+        <div class="card dashboard-container">
+            <h2>📊 Dataset Results Viewport</h2>
+            <p>Select a processed single-cell dataset below to view its 4-panel diagnostic dashboard:</p>
+            
+            <div class="tabs" style="border: none; margin-top: 1rem;">
+                <button class="tab-btn active" style="font-size: 1rem;" onclick="loadDataset('blobs')">Synthetic Blobs (Control)</button>
+                <button class="tab-btn" style="font-size: 1rem;" onclick="loadDataset('pbmc3k')">10x PBMC 3k (Real Standard)</button>
+                <button class="tab-btn" style="font-size: 1rem;" onclick="loadDataset('pbmc68k')">PBMC 68k (Real Large)</button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Visual Chart -->
-                <div class="lg:col-span-2 glass-card p-6 rounded-2xl flex flex-col justify-between min-h-[380px]">
-                    <div>
-                        <h3 class="font-bold text-sm text-slate-300 mb-2">Model Benchmark Comparison</h3>
-                        <p class="text-xs text-slate-400 mb-4">
-                            By moving to our spectral similarity model, our clustering metric (ARI) outperformed standard Euclidean K-Means pipelines, while preserving fine-grained details for rare cell recovery[cite: 1].
-                        </p>
-                    </div>
-                    <div class="relative w-full aspect-video">
-                        <canvas id="performanceChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Analysis Summary -->
-                <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Key Findings</h4>
-                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                            <strong>1. Standard Pipelines Flay Boundaries:</strong><br>
-                            Classic K-Means relies heavily on Euclidean distance, causing cells in transition zones to get mislabeled or grouped into incorrect categories[cite: 1, 2].
-                        </p>
-                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
-                            <strong>2. Info-Geometry Preserves Rare Cells:</strong><br>
-                            Because our smart distance metric scales differences inversely to noise, low-expression markers that distinguish rare cells are preserved instead of being lost[cite: 1].
-                        </p>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            <strong>3. Conformal Sets Flag Uncertainty:</strong><br>
-                            Instead of outputting an overconfident, single label, our conformal boundaries flag transitioning cells, enabling researchers to isolate shifting states dynamically[cite: 1].
-                        </p>
-                    </div>
-                    <div class="pt-4 border-t border-slate-800">
-                        <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-wider block">Verdict</span>
-                        <p class="text-xs text-slate-400 mt-1">Our corrected model successfully outperforms baseline pipelines in both clustering accuracy and rare population identification[cite: 1].</p>
-                    </div>
-                </div>
+            <!-- Interactive Dashboard Output -->
+            <img id="dashboard-display" src="igmc_blobs.png" alt="Dataset Results Dashboard" class="dashboard-img">
+            
+            <div id="metric-text" class="metrics-summary">
+                Synthetic Blobs: IGMC-Lite successfully achieves clean biological partitioning with calibrated boundary discovery.
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- TAB 5: RUN ENVIRONMENT -->
-        <div id="tab-code" class="tab-content hidden flex flex-col gap-6">
-            <div class="glass-card p-8 rounded-3xl">
-                <h2 class="text-lg font-bold text-cyan-400 mb-2">💾 Run the Pipeline Locally</h2>
-                <p class="text-xs text-slate-400 mb-6">Execute these terminal commands to run the comparative benchmarks directly inside your Codespace environment:</p>
-                
-                <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800/80 font-mono text-xs text-cyan-400 space-y-3">
-                    <p class="text-slate-500"># 1. Update your Python package manager</p>
-                    <p class="text-slate-200">pip install --upgrade pip</p>
-                    
-                    <p class="text-slate-500"># 2. Install lightweight dependencies</p>
-                    <p class="text-slate-200">pip install numpy scipy scikit-learn matplotlib</p>
-                    
-                    <p class="text-slate-500"># 3. Run the optimized algorithm</p>
-                    <p class="text-slate-200">python igmc_lite.py</p>
-                </div>
-                <div class="mt-6 flex items-center gap-3 text-xs text-slate-400 bg-white/5 p-4 rounded-xl">
-                    <span>💡</span>
-                    <p>The updated script will run the standard and corrected models side-by-side, saving the analytical comparison as <strong>`igmc_comparative_analysis.png`</strong>.</p>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Tab Control & Chart Logic -->
-    <script>
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            document.getElementById(tabId).classList.remove('hidden');
-
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById('btn-' + tabId).classList.add('active');
-        }
-
-        // Performance Chart Initialization
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Clustering Quality (ARI)', 'Rare Cell Recovery (F1)'],
-                datasets: [
-                    {
-                        label: 'Our IGMC Model (Corrected)',
-                        data: [0.825, 0.781],
-                        backgroundColor: 'rgba(34, 211, 238, 0.75)',
-                        borderColor: 'rgb(34, 211, 238)',
-                        borderWidth: 1.5,
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Standard Pipeline (PCA + K-Means)',
-                        data: [0.530, 0.559],
-                        backgroundColor: 'rgba(99, 102, 241, 0.4)',
-                        borderColor: 'rgb(99, 102, 241)',
-                        borderWidth: 1.5,
-                        borderRadius: 6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { labels: { color: '#94a3b8', font: { size: 11, weight: '600' } } }
-                },
-                scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#94a3b8' }, beginAtZero: true },
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                }
+<script>
+    // Tab switching engine
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tabs .tab-btn').forEach(el => {
+            if (el.getAttribute('onclick').includes(tabId)) {
+                el.classList.add('active');
+            } else {
+                el.classList.remove('active');
             }
         });
-    </script>
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    // Dataset image selector engine
+    function loadDataset(type) {
+        const img = document.getElementById('dashboard-display');
+        const txt = document.getElementById('metric-text');
+        
+        // Update active sub-tab style
+        const subTabs = event.target.parentElement.querySelectorAll('.tab-btn');
+        subTabs.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        if (type === 'blobs') {
+            img.src = 'igmc_blobs.png';
+            txt.textContent = 'Synthetic Blobs Control: Demonstrates baseline geometric accuracy with highly localized conformal predictions.';
+            txt.style.color = '#34d399';
+        } else if (type === 'pbmc3k') {
+            img.src = 'igmc_pbmc3k.png';
+            txt.textContent = '10x PBMC 3k: Classic biological benchmark. Demonstrates robust recovery of dense T-cell subpopulations and transitioning states.';
+            txt.style.color = '#38bdf8';
+        } else if (type === 'pbmc68k') {
+            img.src = 'igmc_pbmc68k.png';
+            txt.textContent = 'PBMC 68k Reduced: Demonstrates massive scalability across complex manifold boundaries with sharp cluster separations.';
+            txt.style.color = '#a78bfa';
+        }
+    }
+</script>
+
 </body>
 </html>
